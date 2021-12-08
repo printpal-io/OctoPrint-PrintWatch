@@ -42,19 +42,19 @@
     1. Open the <b>OctoPrint Web Inferface</b>
 </p>
 <p>
-  2. Open the **Settings** using the 🔧 (wrench) icon in the top right header
+    2. Open the <b>Settings</b> using the 🔧 (wrench) icon in the top right header
 </p>
 <p>
-  3. Open the **Plugin Manager** in the left-side selection menu
+    3. Open the <b>Plugin Manager</b> in the left-side selection menu
 </p>
 <p>
-  4. Click on the **+ Get More** button
+    4. Click on the <b>+ Get More</b> button
 </p>
 <p>
-  5. Search for **PrintWatch**
+    5. Search for <b>PrintWatch</b>
 </p>
 <p>
-  6. Click **Install** on the PrintWatch Plugin
+    6. Click <b>Install</b> on the PrintWatch Plugin
 </p>
 <p>
   7. Restart OctoPrint once Installation is completed
