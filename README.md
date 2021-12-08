@@ -69,7 +69,7 @@
   Once you have successfully installed PrintWatch, you should configure the settings. The Settings for PrintWatch include:
 </p>
 <ul>
-  <li><b>API Key:</b> the secret key used to authenticate API usage</li>
+  <li><b>API Key:</b> the secret key used to authenticate API usage. Get yours <a href="https://printpal.io/pricing/">here</a></li>
   <li><b>Stream URL:</b> the stream address of your camera</li>
   <li><b>Enable Detection System:</b> toggle PrintWatch's detection system</li>
   <li><b>Send Email on  Detection:</b> toggle email notifications sent on detection</li>
