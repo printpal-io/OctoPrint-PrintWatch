@@ -62,3 +62,20 @@
 <p>
   The full installation guide/quickstart can be found here: <a href="https://printpal.io/documentation/quick-start-guide/">QuickStart Guide with OctoPrint</a>
 </p>
+<h3>
+  Configuration
+</h3>
+<p>
+  Once you have successfully installed PrintWatch, you should configure the settings. The Settings for PrintWatch include:
+</p>
+<ul>
+  <li>API Key</li>
+  <li>Stream URL</li>
+  <li>Enable Detection System</li>
+  <li>Send Email on  Detection</li>
+  <li>Email Address</li>
+  <li>Pause Print on Detection</li>
+  <li>Power off Extruder on Detection</li>
+  <li>Detection Threshold</li>
+  <li>Toggle feedback images to API</li>
+</ul>
