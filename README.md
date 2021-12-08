@@ -25,10 +25,10 @@
   PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
 </p>
 <ul>
-  <li>Email Notification/SMS</li>
-  <li>Pausing the print job</li>
-  <li>Turning off the Extruder Heat</li>
-  <li>Any other customized actions created by the user</li>
+  <li>📧 Email Notification/SMS</li>
+  <li>⏸ Pausing the print job</li>
+  <li>🔥 Turning off the Extruder Heat</li>
+  <li>⚙ Any other customized actions created by the user</li>
 </ul>
 
 <p>
@@ -38,3 +38,15 @@
 <h3>
   Setup
 </h3>
+<p>
+  1. Open the OctoPrint Web Inferface
+</p>
+<p>
+  2. Open the Settings using the 🔧 (wrench) icon in the top right header
+</p>
+<p>
+  3. Open the Plugin Manager in the left-side selection menu
+</p>
+<p>
+  4. 
+</p>
