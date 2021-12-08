@@ -1,3 +1,9 @@
+<p align="center">
+    <br>
+    <img src="https://printpal.io/wp-content/uploads/2021/11/printwatch_background_blue-cropped_maxpng.png" width="400"/>
+    <br>
+<p>
+
 # OctoPrint-PrintWatch
 A plugin for the client-side operations of the PrintWatch API.
 
