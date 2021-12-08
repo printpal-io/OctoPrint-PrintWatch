@@ -25,7 +25,7 @@
   PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
 </p>
 <ul>
-  <li>📧 Email Notification/SMS</li>
+  <li>📧 Email/SMS Notification</li>
   <li>⏸ Pausing the print job</li>
   <li>🔥 Turning off the Extruder Heat</li>
   <li>⚙ Any other customized actions created by the user</li>
