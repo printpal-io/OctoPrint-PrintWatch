@@ -66,7 +66,19 @@
   Configuration
 </h3>
 <p>
-  Once you have successfully installed PrintWatch, you should configure the settings. The Settings for PrintWatch include:
+  Once you have successfully installed PrintWatch, you should configure the settings. To configure the settings:
+</p>
+<p>
+    1. Open the <b>OctoPrint Web Inferface</b>
+</p>
+<p>
+    2. Open the <b>Settings</b> using the 🔧 (wrench) icon in the top right header
+</p>
+<p>
+    3. Scroll down to the <b>Plugin Settings</b> in the left-side selection menu and select <b>'PrintWatch'</b>
+</p>
+<p>
+    The Settings for PrintWatch include:
 </p>
 <table>
   <tr>
@@ -145,18 +157,6 @@
 
 <p>
     To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
-</p>
-<p>
-  To configure the settings:
-</p>
-<p>
-    1. Open the <b>OctoPrint Web Inferface</b>
-</p>
-<p>
-    2. Open the <b>Settings</b> using the 🔧 (wrench) icon in the top right header
-</p>
-<p>
-    3. Scroll down to the <b>Plugin Settings</b> in the left-side selection menu and select <b>'PrintWatch'</b>
 </p>
 <h3>
   More about PrintWatch
