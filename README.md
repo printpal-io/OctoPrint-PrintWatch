@@ -69,13 +69,13 @@
   Once you have successfully installed PrintWatch, you should configure the settings. The Settings for PrintWatch include:
 </p>
 <ul>
-  <li>API Key</li>
-  <li>Stream URL</li>
-  <li>Enable Detection System</li>
-  <li>Send Email on  Detection</li>
-  <li>Email Address</li>
-  <li>Pause Print on Detection</li>
-  <li>Power off Extruder on Detection</li>
-  <li>Detection Threshold</li>
-  <li>Toggle feedback images to API</li>
+  <li><b>API Key:</b> the secret key used to authenticate API usage</li>
+  <li><b>Stream URL:</b> the stream address of your camera</li>
+  <li><b>Enable Detection System:</b> toggle PrintWatch's detection system</li>
+  <li><b>Send Email on  Detection:</b> toggle email notifications sent on detection</li>
+  <li><b>Email Address:</b> the email address to send notifications</li>
+  <li><b>Pause Print on Detection:</b> toggle whether the print is paused on detection</li>
+  <li><b>Power off Extruder on Detection:</b> toggle whether the extruder temperature is set to ambient on detection</li>
+  <li><b>Detection Threshold:</b> the threshold at which detections are to be classified as defects. This can be considered the sensitivity of the detection system.</li>
+  <li><b>Toggle feedback images to API:</b> toggle whether feedback images will be sent to the model training syetm to enhance it over time.</li>
 </ul>
