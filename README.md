@@ -14,15 +14,27 @@
         <img alt="API Status" src="https://img.shields.io/badge/API%20status-paused-yellow">
     </a>
 </p>
-# OctoPrint-PrintWatch
-A plugin for the client-side operations of the PrintWatch API.
+<h3 align="center">
+  OctoPrint-PrintWatch
+</h3>
+<p align="center">
+  A plugin for the client-side operations of the PrintWatch API.
+</p>
 
-PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
-- Email Notification/SMS
-- Pausing the print job
-- Turning off the Extruder Heat
-- Any other customized actions created by the user
+<p>
+  PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
+</p>
+<ul>
+  <li>Email Notification/SMS</li>
+  <li>Pausing the print job</li>
+  <li>Turning off the Extruder Heat</li>
+  <li>Any other customized actions created by the user</li>
+</ul>
 
-PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly.
+<p>
+  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly.
+</p>
 
-# Setup
+<h3>
+  Setup
+</h3>
