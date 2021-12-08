@@ -94,3 +94,22 @@
 <p>
     3. Scroll down to the <b>Plugin Settings</b> in the left-side selection menu and select <b>'PrintWatch'</b>
 </p>
+<h3>
+  More about PrintWatch
+</h3>
+<p>
+  PrintWatch is an API that allows for quick and easy deployment of machine learning models, primarily for computer vision. This Plugin implementation only accesses one of the computer vision models for detecting print defects. Read the <a href="https://printpal.io/documentation/api/">API documentation</a> to learn how to create a custom implementation of the API. Below is a table of currently implemented models, with many more to come.
+</p>
+<table>
+  <tr>
+    <td>
+      <b>Model</b>
+    </td>
+    <td>
+      size (px)
+    </td>
+    <td>
+      Objects
+    </td>
+  </tr>
+</table>
