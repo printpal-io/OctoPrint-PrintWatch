@@ -7,13 +7,12 @@
     <a href="https://printpal.io/">
         <img alt="Documentation" src="https://img.shields.io/badge/website-online-brightgreen">
     </a>
-    <a href="https://github.com/huggingface/transformers/releases">
+    <a href="https://github.com/printpal-io/OctoPrint-PrintWatch/releases">
         <img alt="GitHub release" src="https://img.shields.io/badge/release-1.0.0-blue">
     </a>
-    <a href="https://github.com/huggingface/transformers/blob/master/CODE_OF_CONDUCT.md">
-        <img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg">
+    <a href="https://printpal.pythonanywhere.com/api/status">
+        <img alt="API Status" src="https://img.shields.io/badge/API%20status-paused-yellow">
     </a>
-    <a href="https://zenodo.org/badge/latestdoi/155220641"><img src="https://zenodo.org/badge/155220641.svg" alt="DOI"></a>
 </p>
 # OctoPrint-PrintWatch
 A plugin for the client-side operations of the PrintWatch API.
