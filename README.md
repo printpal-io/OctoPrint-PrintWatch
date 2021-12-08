@@ -80,6 +80,9 @@
   <li><b>Toggle feedback images to API:</b> toggle whether feedback images will be sent to the model training syetm to enhance it over time.</li>
 </ul>
 <p>
+    To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
+</p>
+<p>
   To configure the settings:
 </p>
 <p>
