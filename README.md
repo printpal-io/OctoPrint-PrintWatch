@@ -1,6 +1,6 @@
 <p align="center">
     <br>
-    <img src="https://printpal.io/wp-content/uploads/2021/11/printwatch_background_blue-cropped_maxpng.png" width="400"/>
+    <img src="https://printpal.io/wp-content/uploads/2021/11/printwatch_background_blue-cropped_maxpng.png" width="600"/>
     <br>
 <p>
 
