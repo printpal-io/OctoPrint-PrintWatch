@@ -39,7 +39,7 @@
   Setup
 </h3>
 <p>
-  1. Open the **OctoPrint Web Inferface**
+    1. Open the <b>OctoPrint Web Inferface</b>
 </p>
 <p>
   2. Open the **Settings** using the 🔧 (wrench) icon in the top right header
