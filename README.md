@@ -25,7 +25,7 @@
   PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
 </p>
 <ul>
-  <li>📧 Email/SMS Notification</li>
+  <li>📧 Email Notification/SMS</li>
   <li>⏸ Pausing the print job</li>
   <li>🔥 Turning off the Extruder Heat</li>
   <li>⚙ Any other customized actions created by the user</li>
@@ -68,17 +68,81 @@
 <p>
   Once you have successfully installed PrintWatch, you should configure the settings. The Settings for PrintWatch include:
 </p>
-<ul>
-    <li><b>API Key:</b> the secret key used to authenticate API usage. Get yours <a href="https://printpal.io/pricing/">here</a></li>
-  <li><b>Stream URL:</b> the stream address of your camera</li>
-  <li><b>Enable Detection System:</b> toggle PrintWatch's detection system</li>
-  <li><b>Send Email on  Detection:</b> toggle email notifications sent on detection</li>
-  <li><b>Email Address:</b> the email address to send notifications</li>
-  <li><b>Pause Print on Detection:</b> toggle whether the print is paused on detection</li>
-  <li><b>Power off Extruder on Detection:</b> toggle whether the extruder temperature is set to ambient on detection</li>
-  <li><b>Detection Threshold:</b> the threshold at which detections are to be classified as defects. This can be considered the sensitivity of the detection system.</li>
-  <li><b>Toggle feedback images to API:</b> toggle whether feedback images will be sent to the model training syetm to enhance it over time.</li>
-</ul>
+<table>
+  <tr>
+    <td>
+      <b>Setting</b>
+    </td>
+    <td>
+      <b>Description</b>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      API Key
+    </td>
+    <td>
+      The secret key used to authenticate API usage. Get yours <a href="https://printpal.io/pricing/">here</a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Stream URL
+    </td>
+    <td>
+      The stream address of your camera
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Enable Detection System
+    </td>
+    <td>
+      Toggle PrintWatch's detection system
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Email Address
+    </td>
+    <td>
+      The email address to send notifications
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Pause Print on Detection
+    </td>
+    <td>
+      Toggle whether the print is paused on detection
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Power off Extruder on Detection
+    </td>
+    <td>
+      Toggle whether the extruder temperature is set to ambient on detection
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Detection Threshold
+    </td>
+    <td>
+      The threshold at which detections are to be classified as defects. This can be considered the sensitivity of the detection system
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Toggle feedback images to API
+    </td>
+    <td>
+      Toggle feedback images to API:</b> toggle whether feedback images will be sent to the model training syetm to enhance it over time
+    </td>
+  </tr>
+</table>
+
 <p>
     To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
 </p>
