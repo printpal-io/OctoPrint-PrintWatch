@@ -48,7 +48,7 @@
     3. Open the <b>Plugin Manager</b> in the left-side selection menu
 </p>
 <p>
-    4. Click on the <b>+ Get More</b> button
+    4. Click on the <b>"+ Get More"</b> button
 </p>
 <p>
     5. Search for <b>PrintWatch</b>
