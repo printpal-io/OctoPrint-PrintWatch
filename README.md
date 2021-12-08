@@ -59,3 +59,6 @@
 <p>
   7. Restart OctoPrint once Installation is completed
 </p>
+<p>
+  The full installation guide/quickstart can be found here: <a href="https://printpal.io/documentation/quick-start-guide/">QuickStart Guide with OctoPrint</a>
+</p>
