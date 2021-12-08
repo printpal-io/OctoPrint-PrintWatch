@@ -102,13 +102,13 @@
 </p>
 <table>
   <tr>
-    <td>
+    <td style="text-align:center">
       <b>Model</b>
     </td>
-    <td>
+    <td style="text-align:center">
       <b>size (px)</b>
     </td>
-    <td>
+    <td style="text-align:center">
       <b>Objects</b>
     </td>
   </tr>
@@ -116,10 +116,10 @@
     <td>
       DefectDetector
     </td>
-    <td>
+    <td style="text-align:center">
       N/A
     </td>
-    <td>
+    <td style="text-align:center">
       Defects
     </td>
   </tr>
@@ -127,10 +127,10 @@
     <td>
       YOLOv5s
     </td>
-    <td>
+    <td style="text-align:center">
       640
     </td>
-    <td>
+    <td style="text-align:center">
       COCO
     </td>
   </tr>
@@ -138,10 +138,10 @@
     <td>
       YOLOv5m
     </td>
-    <td>
+    <td style="text-align:center">
       640
     </td>
-    <td>
+    <td style="text-align:center">
       COCO
     </td>
   </tr>
@@ -149,10 +149,10 @@
     <td>
       YOLOv5l
     </td>
-    <td>
+    <td style="text-align:center">
       640
     </td>
-    <td>
+    <td style="text-align:center">
       COCO
     </td>
   </tr>
@@ -160,10 +160,10 @@
     <td>
       YOLOv5x
     </td>
-    <td>
+    <td style="text-align:center">
       640
     </td>
-    <td>
+    <td style="text-align:center">
       COCO
     </td>
   </tr>
@@ -171,10 +171,10 @@
     <td>
       SSD MobileNet V2
     </td>
-    <td>
+    <td style="text-align:center">
       320
     </td>
-    <td>
+    <td style="text-align:center">
       COCO
     </td>
   </tr>
@@ -182,10 +182,10 @@
     <td>
       SSD MobileNet V2 FPN
     </td>
-    <td>
+    <td style="text-align:center">
       640
     </td>
-    <td>
+    <td style="text-align:center">
       COCO
     </td>
   </tr>
