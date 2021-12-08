@@ -138,7 +138,7 @@
       Toggle feedback images to API
     </td>
     <td>
-      Toggle feedback images to API:</b> toggle whether feedback images will be sent to the model training syetm to enhance it over time
+     Toggle whether feedback images will be sent to the model training system to enhance it over time
     </td>
   </tr>
 </table>
