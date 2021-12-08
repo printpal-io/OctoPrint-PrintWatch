@@ -106,10 +106,87 @@
       <b>Model</b>
     </td>
     <td>
-      size (px)
+      <b>size (px)</b>
     </td>
     <td>
-      Objects
+      <b>Objects</b>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DefectDetector
+    </td>
+    <td>
+      N/A
+    </td>
+    <td>
+      Defects
+    </td>
+  </tr>
+  <tr>
+    <td>
+      YOLOv5s
+    </td>
+    <td>
+      640
+    </td>
+    <td>
+      COCO
+    </td>
+  </tr>
+  <tr>
+    <td>
+      YOLOv5m
+    </td>
+    <td>
+      640
+    </td>
+    <td>
+      COCO
+    </td>
+  </tr>
+  <tr>
+    <td>
+      YOLOv5l
+    </td>
+    <td>
+      640
+    </td>
+    <td>
+      COCO
+    </td>
+  </tr>
+  <tr>
+    <td>
+      YOLOv5x
+    </td>
+    <td>
+      640
+    </td>
+    <td>
+      COCO
+    </td>
+  </tr>
+  <tr>
+    <td>
+      SSD MobileNet V2
+    </td>
+    <td>
+      320
+    </td>
+    <td>
+      COCO
+    </td>
+  </tr>
+  <tr>
+    <td>
+      SSD MobileNet V2 FPN
+    </td>
+    <td>
+      640
+    </td>
+    <td>
+      COCO
     </td>
   </tr>
 </table>
