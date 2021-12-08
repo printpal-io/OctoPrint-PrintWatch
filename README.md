@@ -13,6 +13,9 @@
     <a href="https://printpal.pythonanywhere.com/api/status">
         <img alt="API Status" src="https://img.shields.io/badge/API%20status-paused-yellow">
     </a>
+    <a href="https://discord.gg/DRM7w88AbS">
+        <img alt="Discord Server" src="https://img.shields.io/badge/discord-online-blueviolet?logo=discord">
+    </a>
 </p>
 <h3 align="center">
   OctoPrint-PrintWatch
