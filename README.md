@@ -11,7 +11,7 @@
         <img alt="GitHub release" src="https://img.shields.io/badge/release-1.0.0-blue">
     </a>
     <a href="https://printpal.pythonanywhere.com/api/status">
-        <img alt="API Status" src="https://img.shields.io/badge/API%20status-paused-yellow">
+        <img alt="API Status" src="https://img.shields.io/badge/API-online-brightgreen">
     </a>
     <a href="https://discord.gg/DRM7w88AbS">
         <img alt="Discord Server" src="https://img.shields.io/badge/discord-online-blueviolet?logo=discord">
