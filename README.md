@@ -21,7 +21,7 @@
   OctoPrint-PrintWatch
 </h3>
 <p>
-  PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
+  PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes the video feed from any camera compatible with OctoPrint and runs it through a Machine Learning model that detects print defects in real-time. The plugin takes actions set by the user once a failure is positively detected that include:
 </p>
 <ul>
   <li>📧 Email/SMS Notification</li>
@@ -31,7 +31,7 @@
 </ul>
 
 <p>
-  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly.
+  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs.
 </p>
 <p>
     Current features include:
