@@ -39,8 +39,8 @@
 <ul>
   <li>Real-time defect detection</li>
   <li>Anomalous Printer Detection</li>
-  <li>Resume Print</li>
   <li>Advanced Analytics</li>
+  <li>Resume Print</li>
 </ul>
 <p>
     Upcoming features include:
