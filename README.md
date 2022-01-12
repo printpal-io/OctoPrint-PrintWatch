@@ -20,10 +20,6 @@
 <h3 align="center">
   OctoPrint-PrintWatch
 </h3>
-<p align="center">
-  A plugin for the client-side operations of the PrintWatch API.
-</p>
-
 <p>
   PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes actions set by the user once a failure is positively detected that include:
 </p>
