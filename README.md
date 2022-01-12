@@ -33,7 +33,24 @@
 <p>
   PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly.
 </p>
-
+<p>
+    Current features include:
+</p>
+<ul>
+  <li>Real-time defect detection</li>
+  <li>Anomalous Printer Detection</li>
+  <li>Resume Print</li>
+  <li>Advanced Analytics</li>
+</ul>
+<p>
+    Upcoming features include:
+</p>
+<ul>
+  <li>G-Code and Speed optimization with ML</li>
+  <li>MultiCamming</li>
+  <li>ROI selection and slicing</li>
+  <li>Local Device</li>
+</ul>
 <h3>
   Setup
 </h3>
