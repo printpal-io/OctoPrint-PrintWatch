@@ -43,7 +43,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
             elif response['statusCode'] == 213:
-                self.plugin.inferencer.REQUEST_INTERVAL= 30.0
+                self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
