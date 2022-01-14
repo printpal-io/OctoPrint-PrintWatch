@@ -59,8 +59,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _create_payload(self, image):
         settings = self.plugin._settings.get([])
-        print("settings in payload: {}".format(settings))
-        print("parameters in payload: {}".format(self.parameters))
+        self.plugin._logger.info("settings in payload: {}".format(settings))
+        self.plugin._logger.info("parameters in payload: {}".format(self.parameters))
         #if not isinstance(self.plugin._settings.get(["confidence"]), int):
         #    settings["confidence"] = 60
         return dumps({
