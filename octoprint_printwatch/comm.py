@@ -61,8 +61,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         settings = self.plugin._settings.get([])
         self.plugin._logger.info("settings in payload: {}".format(settings))
         self.plugin._logger.info("parameters in payload: {}".format(self.parameters))
-        #if not isinstance(self.plugin._settings.get(["confidence"]), int):
-        #    settings["confidence"] = 60
+        if not "confidence" in settings:
+            settings["confidence"] = 60
         return dumps({
                             'image_array' : image,
                             'settings' : settings,
