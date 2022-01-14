@@ -16,7 +16,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'ip' : gethostbyname(gethostname()),
                             'route' : DEFAULT_ROUTE,
                             'nms' : False,
-                            'id' : self.plugin.id,
+                            'id' : self.plugin._settings.global_get(["accessControl", "salt"]),
                             'bad_responses' : 0
                             }
 
