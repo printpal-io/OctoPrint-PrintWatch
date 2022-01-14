@@ -58,6 +58,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
     def _create_payload(self, image):
+        if not isinstance(self.plugin._settings.get(["confidence"]), int):
+            self.plugin._settings.get(["confidence"]) = 60
         return dumps({
                             'image_array' : image,
                             'settings' : self.plugin._settings.get([]),
