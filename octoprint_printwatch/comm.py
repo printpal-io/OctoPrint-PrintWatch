@@ -39,6 +39,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
         try:
             response = loads(urlopen(inference_request).read())
+            self.plugin._logger.info("Response from server: {}".format(response))
             if response['statusCode'] == 200:
                 self.plugin.inferencer.pred = eval(response['defect_detected'])
                 self.parameters['bad_responses'] = 0
