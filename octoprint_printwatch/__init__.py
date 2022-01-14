@@ -1,10 +1,10 @@
 from __future__ import absolute_import, unicode_literals
 import octoprint.plugin
 from octoprint.events import Events
-from .utils.videostreamer import VideoStreamer
-from .utils.comm import CommManager
-from .utils.inferencer import Inferencer
-from .utils.printer import PrinterControl
+from .videostreamer import VideoStreamer
+from .comm import CommManager
+from .inferencer import Inferencer
+from .printer import PrinterControl
 import os
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
