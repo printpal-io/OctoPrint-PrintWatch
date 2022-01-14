@@ -6,6 +6,7 @@ from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
 import os
+import io
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.ShutdownPlugin,
@@ -17,7 +18,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
     def on_after_startup(self):
-        with open(os.path.join(os.path.dirname(__file__), 'data/unique_identifier.txt'), 'r') as f:
+        with io.open(os.path.join(self.get_plugin_data_folder(), "unique_identifier.txt"), "r", encoding="utf-8") as f:
             self.id = f.read()
         self._logger.info("Loading PrintWatch...")
         self.comm_manager = CommManager(self)
