@@ -79,12 +79,10 @@ except:
 try:
     import uuid
     import os
+    import io
 
-    if not os.path.isfile(os.path.join(os.getcwd(),'octoprint_printwatch/data/')):
-        os.mkdir('octoprint_printwatch/data')
-
-    with open(os.path.join(os.getcwd(), 'octoprint_printwatch/data/unique_identifier.txt'), 'w') as unique_identifier:
-        unique_identifier.write(uuid.uuid4().hex)
+    with io.open(os.path.join(self.get_plugin_data_folder(), "unique_identifier.txt"), "w", encoding="utf-8") as f:
+            f.write(uuid.uuid4().hex)
 except:
     print("Error writing unique identifier")
 
