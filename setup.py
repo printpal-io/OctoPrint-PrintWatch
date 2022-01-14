@@ -76,15 +76,6 @@ except:
 
     sys.exit(-1)
 
-try:
-    import uuid
-    import os
-    import io
-
-    with io.open(os.path.join(self.get_plugin_data_folder(), "unique_identifier.txt"), "w", encoding="utf-8") as f:
-            f.write(uuid.uuid4().hex)
-except:
-    print("Error writing unique identifier")
 
 setup_parameters = octoprint_setuptools.create_plugin_setup_parameters(
     identifier=plugin_identifier,
