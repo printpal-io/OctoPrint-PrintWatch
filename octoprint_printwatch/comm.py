@@ -39,7 +39,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
         try:
             response = loads(urlopen(inference_request).read())
-            self.plugin._logger.info("Response from server: {}".format(response))
             if response['statusCode'] == 200:
                 self.plugin.inferencer.pred = eval(response['defect_detected'])
                 self.parameters['bad_responses'] = 0
@@ -59,8 +58,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _create_payload(self, image):
         settings = self.plugin._settings.get([])
-        self.plugin._logger.info("settings in payload: {}".format(settings))
-        self.plugin._logger.info("parameters in payload: {}".format(self.parameters))
         if not "confidence" in settings:
             settings["confidence"] = 60
         return dumps({
