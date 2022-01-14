@@ -5,6 +5,7 @@ from time import time, sleep
 from threading import Lock
 from json import loads, dumps
 from base64 import b64encode
+from uuid import uuid4
 
 DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
 
@@ -16,7 +17,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'ip' : gethostbyname(gethostname()),
                             'route' : DEFAULT_ROUTE,
                             'nms' : False,
-                            'id' : self.plugin._settings.global_get(["accessControl", "salt"]),
+                            'id' : self.plugin._settings.global_get(["accessControl", "salt"]) if self.plugin._settings.global_get(["accessControl", "salt"]) is not None else uuid4().hex,
                             'bad_responses' : 0
                             }
 
