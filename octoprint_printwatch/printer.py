@@ -3,7 +3,6 @@ class PrinterControl():
     def __init__(self, plugin):
         self.plugin = plugin
         self._temperatures = None
-        self.Z_HEIGHT = 10
 
     def _extruder_set(self, temperature=0):
         for extruder in range(self.plugin._printer_profile_manager.get_current().get('extruder').get('count', 1)):
