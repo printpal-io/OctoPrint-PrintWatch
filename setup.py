@@ -18,7 +18,7 @@ plugin_version = "1.0.10"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = "PrintWatch watches your prints for defects and optimizes your 3D printers using Artificial Intelligence."
+plugin_description = "PrintWatch monitors your prints for defects in real-time and optimizes your 3D printers using Artificial Intelligence"
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "printpal.io"
