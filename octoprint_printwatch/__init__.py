@@ -18,8 +18,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
     def on_after_startup(self):
-        with io.open(os.path.join(self.get_plugin_data_folder(), "unique_identifier.txt"), "r", encoding="utf-8") as f:
-            self.id = f.read()
         self._logger.info("Loading PrintWatch...")
         self.comm_manager = CommManager(self)
         self.streamer = VideoStreamer(self)
