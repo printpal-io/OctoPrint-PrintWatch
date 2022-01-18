@@ -48,6 +48,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
+                self.plugin._logger.info("Payload: {} {}".format(self.plugin._settings.get([]), self.parameters))
+                self.plugin._logger.info("Response: {}".format(response))
 
         except Exception as e:
             self.plugin._logger.info("Error retrieving server response: {}".format(str(e)))
