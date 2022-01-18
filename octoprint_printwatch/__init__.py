@@ -27,10 +27,19 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
     def get_update_information(self):
         return dict(
-            PrintWatch=dict(
-                name="PrintWatch",
-                version=self._plugin_version)
-                )
+            printwatch=dict(
+                name=self._plugin_name,
+                version=self._plugin_version,
+            
+                type="github_release",
+                current=self._plugin_version,
+                user="printpal-io",
+                repo="OctoPrint-PrintWatch",
+              
+                pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/master.zip"
+            
+            )
+        )
 
 
     def get_settings_defaults(self):
