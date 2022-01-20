@@ -1,0 +1,22 @@
+<img src="plugin/printwatch/static/img/printwatch_logo.png" alt="printpal.io printwatch logo" />
+<h3>{{ _('PrintWatch preview') }}</h3>
+
+<script>
+setInterval(function() {
+    var myImageElement = document.getElementById('myImage');
+    myImageElement.src = 'plugin/printwatch/static/img/frame.jpg?rand=' + Math.random();
+}, 1000);
+</script>
+
+<div style="background-color:black;width:100%;aspect-ratio:19/9;text-align:center;color:white">
+
+    <img id="myImage" src="plugin/printwatch/static/img/frame.jpg" alt="Loading preview" style="display:block;height:100%;margin-left:auto;margin-right:auto">
+
+</div>
+
+<div style="margin-top:1%">
+    <li style="display:inline"><a href="https://printpal.io/" target="_blank" rel="noreferrer noopener"><i class="fas fa-home"></i> {{ _('Website') }}</a></li>
+    <li style="display:inline"><a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener"><i class="fab fa-github-square"></i> {{ _('Github') }}</a></li>
+    <li style="display:inline"><a href="https://discord.com/invite/yhkcZYmg" target="_blank" rel="noreferrer noopener"><i class="fab fa-discord"></i> {{ _('Discord') }}</a></li>
+    <li style="display:inline"><a href="https://printpal.io/documentation/" target="_blank" rel="noreferrer noopener"><i class="fas fa-book"></i> {{ _('Documentation') }}</a></li>
+</div>
