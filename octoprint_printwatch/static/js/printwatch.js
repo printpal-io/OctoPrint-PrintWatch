@@ -7,7 +7,9 @@ $(function() {
         self.contents = ko.observable();
 
         self.onDataUpdaterPluginMessage = function(plugin, data){
-          self.contents(data.image);
+          if(plugin=="printwatch" && data.type=="display_frame"){
+              self.contents(data.image);
+          }
         }
         // this will be called when the user clicks the "Go" button and set the iframe's URL to
         // the entered URL
