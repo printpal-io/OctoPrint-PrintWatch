@@ -59,7 +59,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin.inferencer.pred = eval(response['defect_detected'])
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
-                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="new_image", image=self.draw_boxes(eval(re.sub('\s+', ',', response['boxes'].replace('\n',''))))))
+                self.display_frame = self.draw_boxes(eval(re.sub('\s+', ',', response['boxes'].replace('\n',''))))
+                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="new_image", image=self.display_frame))
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
