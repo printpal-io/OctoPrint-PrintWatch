@@ -33,7 +33,7 @@ plugin_url = "https://github.com/Plebbyd/OctoPrint-Printwatch"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = []
+plugin_requires = ["pillow >=6.2.0<7.0.0"]
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
