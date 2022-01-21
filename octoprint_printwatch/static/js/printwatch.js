@@ -4,10 +4,13 @@ $(function() {
 
         self.settings = parameters[0];
 
+        self.contents = ko.observable();
 
+        self.onDataUpdaterPluginMessage = function(plugin, data){
+          self.contents(data.image);
+        }
         // this will be called when the user clicks the "Go" button and set the iframe's URL to
         // the entered URL
-
 
         // This will get called before the PrintwatchViewModel gets bound to the DOM, but after its
         // dependencies have already been initialized. It is especially guaranteed that this method
@@ -25,6 +28,7 @@ $(function() {
         // here is the order in which the dependencies will be injected into your view model upon
         // instantiation via the parameters argument
         ["settingsViewModel"],
+        ["#tab_plugin_printwatch"]
 
     ]);
 });
