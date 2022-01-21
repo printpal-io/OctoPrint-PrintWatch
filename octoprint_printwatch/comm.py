@@ -8,7 +8,8 @@ from base64 import b64encode
 from uuid import uuid4
 import io
 import PIL.Image as Image
-import os
+from PIL import ImageDraw
+import re
 
 DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
 
@@ -24,6 +25,18 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'bad_responses' : 0
                             }
 
+    def _create_payload(self, image):
+        settings = self.plugin._settings.get([])
+        if not "confidence" in settings:
+            settings["confidence"] = 60
+        return dumps({
+                            'image_array' : image,
+                            'settings' : settings,
+                            'parameters' : self.parameters,
+                            'job' : self.plugin._printer.get_current_job(),
+                            'data' : self.plugin._printer.get_current_data()
+                            }).encode('utf8')
+
     def email_notification(self):
         if self.plugin._settings.get(["enable_email_notification"]):
             self.parameters['nms'] = True
@@ -33,13 +46,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def send_request(self):
         with Lock():
-            image_bytes = bytearray(self.plugin.streamer.jpg)
-            image = b64encode(image_bytes).decode('utf8')
-            image_io = Image.open(io.BytesIO(image_bytes))
-            image_io.save('plugin/printwatch/static/img/frame.jpg')
+            self.image = bytearray(self.plugin.streamer.jpg)
         inference_request = Request('{}/inference/'.format(
             self.parameters['route']),
-            data=self._create_payload(image),
+            data=self._create_payload(b64encode(self.image).decode('utf8')),
             method='POST'
         )
 
@@ -49,6 +59,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin.inferencer.pred = eval(response['defect_detected'])
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="new_image", image=self.draw_boxes(eval(re.sub('\s+', ',', response['boxes'].replace('\n',''))))))
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
@@ -63,15 +74,20 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             self.plugin.inferencer.pred = False
         self.parameters['last_t'] = time()
 
+    def draw_boxes(self, boxes):
+        pil_img = Image.open(io.BytesIO(self.image))
+        process_image = ImageDraw.Draw(pil_img)
+        width, height = pil_img.size
 
-    def _create_payload(self, image):
-        settings = self.plugin._settings.get([])
-        if not "confidence" in settings:
-            settings["confidence"] = 60
-        return dumps({
-                            'image_array' : image,
-                            'settings' : settings,
-                            'parameters' : self.parameters,
-                            'job' : self.plugin._printer.get_current_job(),
-                            'data' : self.plugin._printer.get_current_data()
-                            }).encode('utf8')
+        for i, det in enumerate(boxes):
+            det = [j / 640 for j in det]
+            x1 = (det[0] - (det[2]/2))*width
+            y1 = (det[1] - (det[3]/2))* height
+            x2 = (det[0] + (det[2]/2))*width
+            y2 = (det[1] + (det[3]/2))*height
+            process_image.rectangle([(x1, y1), (x2, y2)], fill=None, outline="red", width=4)
+
+        out_img = io.BytesIO()
+        pil_img.save(out_img, format='PNG')
+        contents = b64encode(out_img.getvalue()).decode('utf8')
+        return 'data:image/png;charset=utf-8;base64,' + contents.split('\n')[0]
