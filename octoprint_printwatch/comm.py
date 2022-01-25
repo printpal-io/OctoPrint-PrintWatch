@@ -11,6 +11,7 @@ import PIL.Image as Image
 from PIL import ImageDraw
 import re
 
+
 DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
@@ -25,6 +26,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'bad_responses' : 0
                             }
 
+
     def _create_payload(self, image):
         settings = self.plugin._settings.get([])
         if not "confidence" in settings:
@@ -36,6 +38,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'job' : self.plugin._printer.get_current_job(),
                             'data' : self.plugin._printer.get_current_data()
                             }).encode('utf8')
+
 
     def email_notification(self):
         if self.plugin._settings.get(["enable_email_notification"]):

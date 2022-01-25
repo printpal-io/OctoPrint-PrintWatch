@@ -7,7 +7,6 @@ from .inferencer import Inferencer
 from .printer import PrinterControl
 
 
-
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.ShutdownPlugin,
                            octoprint.plugin.TemplatePlugin,
@@ -37,7 +36,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 repo="OctoPrint-PrintWatch",
 
                 pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/master.zip"
-
+              
             )
         )
 
@@ -59,11 +58,13 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             dict(type="settings", custom_bindings=False)
         ]
 
+
     def get_assets(self):
 
         return dict(
             js=["js/printwatch.js"]
         )
+
 
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:
