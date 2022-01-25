@@ -5,8 +5,7 @@ from .videostreamer import VideoStreamer
 from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
-import os
-import io
+
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.ShutdownPlugin,
@@ -30,14 +29,14 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             printwatch=dict(
                 name=self._plugin_name,
                 version=self._plugin_version,
-            
+
                 type="github_release",
                 current=self._plugin_version,
                 user="printpal-io",
                 repo="OctoPrint-PrintWatch",
-              
+
                 pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/master.zip"
-            
+              
             )
         )
 
@@ -58,6 +57,13 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         return [
             dict(type="settings", custom_bindings=False)
         ]
+
+
+    def get_assets(self):
+
+        return dict(
+            js=["js/printwatch.js"]
+        )
 
 
     def on_event(self, event, payload):
