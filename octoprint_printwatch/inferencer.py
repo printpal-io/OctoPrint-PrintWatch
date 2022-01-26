@@ -53,12 +53,13 @@ class Inferencer():
 
     def start_service(self):
         self.triggered = False
-        if self.inference_loop is None and self.plugin.streamer.stream is not None:
-            self.run_thread = True
-            self.inference_loop = Thread(target=self._inferencing)
-            self.inference_loop.start()
-            self.plugin._logger.info("PrintWatch inference service started")
-            self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
+        if self.plugin._settings.get(["enable_detector"]):
+            if self.inference_loop is None and self.plugin.streamer.stream is not None:
+                self.run_thread = True
+                self.inference_loop = Thread(target=self._inferencing)
+                self.inference_loop.start()
+                self.plugin._logger.info("PrintWatch inference service started")
+                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
 
     def kill_service(self):
         self.run_thread = False
