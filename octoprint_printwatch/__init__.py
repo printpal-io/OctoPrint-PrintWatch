@@ -35,15 +35,15 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 user="printpal-io",
                 repo="OctoPrint-PrintWatch",
 
-                pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/master.zip"
-              
+                pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/release.zip"
+
             )
         )
 
 
     def get_settings_defaults(self):
         return dict(
-            stream_url = "http://127.0.0.1/webcam/?action=stream",
+            stream_url = self._settings.get(['webcam', 'streamUrl']),
             enable_detector = True,
             enable_email_notification = False,
             email_addr = '',

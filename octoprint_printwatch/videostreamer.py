@@ -27,6 +27,7 @@ class VideoStreamer(octoprint.plugin.SettingsPlugin):
                 self.stream = urlopen(self.plugin._settings.get(["stream_url"]), context = CTX)
                 self.stream_enabled = True
                 self.queue = Thread(target=self._frame_queue)
+                self.queue.daemon = True
                 self.queue.start()
                 self.plugin._logger.info("PrintWatch stream opened successfully [url: {}, status: {}]".format(self.plugin._settings.get(["stream_url"]), self.stream.status))
             except:
