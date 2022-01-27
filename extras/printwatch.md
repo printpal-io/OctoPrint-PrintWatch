@@ -126,4 +126,7 @@ Follow the setup guide on the official [GitHub](https://github.com/printpal-io/O
 
 ### Authentication
 
-In order to use PrintWatch, you must provide your API key in the settings. Visit the [printpal.io website](https://printpal.io/pricing/) to register your key for your printers. 
+In order to use PrintWatch, you must provide your API key in the settings. Visit the [printpal.io website](https://printpal.io/pricing/) to register your key for your printers.
+
+# Privacy Policy
+Read our privacy polich here: [PrintWatch Privacy policy](https://printpal.io/privacy/)
