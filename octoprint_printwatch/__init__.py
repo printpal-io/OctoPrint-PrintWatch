@@ -22,7 +22,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
         self.controller = PrinterControl(self)
-        self.url = self._settings.global_get(["webcam", "streamUrl"])
 
 
     def get_update_information(self):
@@ -44,7 +43,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            stream_url = self.url if self.url is not None else 'http://127.0.0.1/webcam/?action=stream',
+            stream_url = 'http://127.0.0.1/webcam/?action=stream',
             enable_detector = True,
             enable_email_notification = False,
             email_addr = '',
