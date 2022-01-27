@@ -12,8 +12,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.TemplatePlugin,
                            octoprint.plugin.SettingsPlugin,
                            octoprint.plugin.AssetPlugin,
-                           octoprint.plugin.EventHandlerPlugin,
-                           octoprint.plugin.SettingsPlugin
+                           octoprint.plugin.EventHandlerPlugin
                            ):
 
 
