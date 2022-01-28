@@ -70,6 +70,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
+                self.plugin.inferencer.REQUEST_INTERVAL = 10.0
                 self.plugin._logger.info("Payload: {} {}".format(self.plugin._settings.get([]), self.parameters))
                 self.plugin._logger.info("Response: {}".format(response))
 
