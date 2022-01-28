@@ -35,7 +35,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 user="printpal-io",
                 repo="OctoPrint-PrintWatch",
 
-                pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/release.zip"
+                pip="https://github.com/printpal-io/OctoPrint-PrintWatch/archive/{target}.zip"
 
             )
         )
