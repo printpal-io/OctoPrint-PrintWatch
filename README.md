@@ -41,6 +41,7 @@
   <li>Anomalous Printer Detection</li>
   <li>Advanced Analytics</li>
   <li>Resume Print</li>
+    <li>Weekly builds of the Object Detection model</li>
 </ul>
 <p>
     Upcoming features include:
