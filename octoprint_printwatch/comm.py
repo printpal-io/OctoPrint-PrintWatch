@@ -42,10 +42,13 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def email_notification(self):
         if self.plugin._settings.get(["enable_email_notification"]):
-            self.parameters['nms'] = True
-            sleep(self.plugin.inferencer.REQUEST_INTERVAL)
-            self.send_request()
-            self.plugin._logger.info("Email notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
+            try:
+                self.parameters['nms'] = True
+                sleep(self.plugin.inferencer.REQUEST_INTERVAL)
+                self.send_request()
+                self.plugin._logger.info("Email notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
+            except Exception as e:
+                self.plugin._logger.info("Error in email notification: {}".format(str(e)))
 
     def send_request(self):
         with Lock():
