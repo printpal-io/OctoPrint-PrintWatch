@@ -25,9 +25,13 @@ class Inferencer():
             self.circular_buffer.pop(0)
 
     def _attempt_pause(self):
-        self.plugin._printer.pause_print()
-        self.triggered = True
-        self.plugin._logger.info("Print Pause command sent.")
+        try:
+            self.plugin._printer.pause_print()
+            self.triggered = True
+            self.plugin._logger.info("Print Pause command sent.")
+        except Exception as e:
+            self.plugin._logger.info("Error in _attempt_pause: {}".format(str(e)))
+            
 
     def _inferencing(self):
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
@@ -47,9 +51,12 @@ class Inferencer():
                                     self._attempt_pause()
 
                 if self.plugin.comm_manager.parameters['bad_responses'] >= BUFFER_LENGTH:
-                    self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
-                    self.plugin.streamer.kill_service()
-                    self.kill_service()
+                    try:
+                        self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
+                        self.plugin.streamer.kill_service()
+                        self.kill_service()
+                    except Exception as e:
+                        self.plugin._logger.info("Error in inferencer loop: {}".format(str(e)))
 
     def start_service(self):
         self.triggered = False
@@ -74,6 +81,9 @@ class Inferencer():
         self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-grey.png'))
 
     def shutoff_event(self):
-        self.plugin.controller.shutoff_actions()
-        if self.triggered:
-            self.plugin.comm_manager.email_notification()
+        try:
+            self.plugin.controller.shutoff_actions()
+            if self.triggered:
+                self.plugin.comm_manager.email_notification()
+        except Exception as e:
+            self.plugin._logger.info("Error in shutoff_event: {}".format(str(e)))
