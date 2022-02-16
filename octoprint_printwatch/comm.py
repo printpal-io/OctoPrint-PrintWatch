@@ -12,7 +12,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
+DEFAULT_ROUTE = 'http://printpaldev.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
