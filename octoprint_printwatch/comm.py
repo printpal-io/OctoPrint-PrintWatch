@@ -69,7 +69,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
             elif response['statusCode'] == 213:
-                self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                self.plugin.inferencer.REQUEST_INTERVAL= 10.0
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
