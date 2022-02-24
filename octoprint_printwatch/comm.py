@@ -65,8 +65,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
+                self.plugin._logger.info("Response: {}".format(response))
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                self.plugin._logger.info("Response: {}".format(response))
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
