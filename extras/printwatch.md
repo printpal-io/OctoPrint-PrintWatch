@@ -11,7 +11,7 @@ date: 2022-01-16
 
 homepage: https://github.com/printpal-io/OctoPrint-Printwatch
 source: https://github.com/printpal-io/OctoPrint-Printwatch
-archive: https://github.com/printpal-io/OctoPrint-Printwatch/archive/release.zip
+archive: https://github.com/printpal-io/OctoPrint-Printwatch/archive/master.zip
 
 tags:
 - AI
