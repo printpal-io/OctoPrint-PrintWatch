@@ -12,7 +12,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'http://printpaldev.pythonanywhere.com'
+DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
@@ -42,13 +42,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def email_notification(self):
         if self.plugin._settings.get(["enable_email_notification"]):
-            try:
-                self.parameters['nms'] = True
-                sleep(self.plugin.inferencer.REQUEST_INTERVAL)
-                self.send_request()
-                self.plugin._logger.info("Email notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
-            except Exception as e:
-                self.plugin._logger.info("Error in email notification: {}".format(str(e)))
+            self.parameters['nms'] = True
+            sleep(self.plugin.inferencer.REQUEST_INTERVAL)
+            self.send_request()
+            self.plugin._logger.info("Email notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
 
     def send_request(self):
         with Lock():
@@ -69,7 +66,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
             elif response['statusCode'] == 213:
-                self.plugin.inferencer.REQUEST_INTERVAL= 10.0
+                self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1

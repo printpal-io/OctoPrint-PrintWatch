@@ -48,7 +48,9 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             enable_email_notification = False,
             email_addr = '',
             enable_shutoff = False,
-            confidence = 75,
+            confidence = 60,
+            buffer_length = 16,
+            buffer_percent = 80,
             enable_feedback_images = True,
             api_key = ''
             )

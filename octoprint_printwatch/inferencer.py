@@ -1,9 +1,6 @@
 from threading import Thread
 from time import time
 
-BUFFER_LENGTH = 16
-BUFFER_PERCENTAGE = 0.80
-
 class Inferencer():
     def __init__(self, plugin):
         self.plugin = plugin
@@ -21,17 +18,13 @@ class Inferencer():
         else:
             self.circular_buffer.append([False, time()])
 
-        if len(self.circular_buffer) > BUFFER_LENGTH:
+        if len(self.circular_buffer) > self.plugin._settings.get(["buffer_length"]):
             self.circular_buffer.pop(0)
 
     def _attempt_pause(self):
-        try:
-            self.plugin._printer.pause_print()
-            self.triggered = True
-            self.plugin._logger.info("Print Pause command sent.")
-        except Exception as e:
-            self.plugin._logger.info("Error in _attempt_pause: {}".format(str(e)))
-            
+        self.plugin._printer.pause_print()
+        self.triggered = True
+        self.plugin._logger.info("Print Pause command sent.")
 
     def _inferencing(self):
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
@@ -42,21 +35,18 @@ class Inferencer():
                         self.plugin.comm_manager.send_request()
                         self._buffer_check()
 
-                        if len(self.circular_buffer) == BUFFER_LENGTH:
-                            self.current_percent = [i[0] for i in self.circular_buffer].count(True) / BUFFER_LENGTH
-                            if self.current_percent >= BUFFER_PERCENTAGE:
+                        if len(self.circular_buffer) == self.plugin._settings.get(["buffer_length"]):
+                            self.current_percent = [i[0] for i in self.circular_buffer].count(True) / self.plugin._settings.get(["buffer_length"])
+                            if self.current_percent >= self.plugin._settings.get(["buffer_percent"]) / 100:
                                 pause_condition = (not self.triggered or (not self.plugin._printer.is_pausing() and self.plugin._printer.is_printing())) and self.plugin._settings.get(["enable_shutoff"])
                                 if pause_condition:
                                     self.plugin._logger.info("Failure Detected. Pausing Print.")
                                     self._attempt_pause()
 
-                if self.plugin.comm_manager.parameters['bad_responses'] >= BUFFER_LENGTH:
-                    try:
-                        self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
-                        self.plugin.streamer.kill_service()
-                        self.kill_service()
-                    except Exception as e:
-                        self.plugin._logger.info("Error in inferencer loop: {}".format(str(e)))
+                if self.plugin.comm_manager.parameters['bad_responses'] >= self.plugin._settings.get(["buffer_length"]):
+                    self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
+                    self.plugin.streamer.kill_service()
+                    self.kill_service()
 
     def start_service(self):
         self.triggered = False
@@ -81,9 +71,6 @@ class Inferencer():
         self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-grey.png'))
 
     def shutoff_event(self):
-        try:
-            self.plugin.controller.shutoff_actions()
-            if self.triggered:
-                self.plugin.comm_manager.email_notification()
-        except Exception as e:
-            self.plugin._logger.info("Error in shutoff_event: {}".format(str(e)))
+        self.plugin.controller.shutoff_actions()
+        if self.triggered:
+            self.plugin.comm_manager.email_notification()

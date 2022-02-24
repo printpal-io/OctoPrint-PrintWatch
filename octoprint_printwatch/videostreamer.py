@@ -35,7 +35,7 @@ class VideoStreamer(octoprint.plugin.SettingsPlugin):
                 self.plugin._logger.info("PrintWatch stream failed to open [{}]".format(self.plugin._settings.get(["stream_url"])))
 
     def kill_service(self):
-        self.stream_enabled =False
+        self.stream_enabled = False
         self.queue = None
         self.stream = None
         self.plugin._logger.info("PrintWatch stream closed")
