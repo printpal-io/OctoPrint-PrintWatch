@@ -51,10 +51,10 @@ class Inferencer():
                         self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
                         self.plugin.streamer.kill_service()
                         self.kill_service()
-             except Exception as e:
+            except Exception as e:
                 self.plugin._logger.info("Excepted in main inference loop: {}".format(str(e)))  
-                    
-        self.plugin._logger.info("Inference LOOP EXITED FOR SOME REASON")  
+
+        self.plugin._logger.info("Inference LOOP EXITED FOR SOME REASON")
 
     def start_service(self):
         self.triggered = False
