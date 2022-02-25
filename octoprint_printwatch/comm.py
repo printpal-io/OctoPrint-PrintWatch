@@ -55,7 +55,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             data=self._create_payload(b64encode(self.image).decode('utf8')),
             method='POST'
         )
-
+        self.plugin._logger.info("Sending Inference...")
         try:
             response = loads(urlopen(inference_request).read())
             if response['statusCode'] == 200:
