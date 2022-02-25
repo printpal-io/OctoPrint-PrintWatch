@@ -29,6 +29,7 @@ class Inferencer():
     def _inferencing(self):
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
         self.plugin._logger.info("Settings in beggining of inference loop: {}".format(self.plugin._settings.get([])))
+        self.plugin._logger.info("Enable Detector setting in beggining of inference loop: {}".format(self.plugin._settings.get(["enable_detector"])))
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             if self.plugin._printer.is_printing() and not self.triggered:
                 if time() - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
