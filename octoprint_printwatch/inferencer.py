@@ -18,7 +18,7 @@ class Inferencer():
         else:
             self.circular_buffer.append([False, time()])
 
-        if len(self.circular_buffer) > int(self.plugin._settings.get(["buffer_length"])):
+        while len(self.circular_buffer) > int(self.plugin._settings.get(["buffer_length"])):
             self.circular_buffer.pop(0)
 
     def _attempt_pause(self):
