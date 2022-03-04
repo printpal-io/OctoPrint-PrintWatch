@@ -78,7 +78,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def start_service(self):
         self.heartbeat = True
         if self.plugin._settings.get(["enable_detector"]):
-            if self.plugin.inferencer.inference_loop is None and self.plugin.streamer.stream is not None:
+            if self.plugin.inferencer.inference_loop is None and self.plugin.streamer.stream is None:
                 self.heartbeat_loop = Thread(target=self._heartbeat)
                 self.heartbeat_loop.daemon = True
                 self.heartbeat_loop.start()
