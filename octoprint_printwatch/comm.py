@@ -29,14 +29,17 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
     def _heartbeat(self):
-        self.heartbeat = True
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
+            self.plugin._logger.info("{}    {}   {}".format(self.plugin._settings.get(["enable_detector"]), self.heartbeat, time() - self.parameters['last_t']))
             if time() - self.parameters['last_t'] > 30.0:
-                response = self._send(heartbeat=True)
-                self._check_action(response)
-                self.parameters['last_t'] = time()
-                self.plugin._logger.info("Thump")
-                self.plugin._logger.info("response: {}".format(response))
+                try:
+                    response = self._send(heartbeat=True)
+                    self._check_action(response)
+                    self.parameters['last_t'] = time()
+                    self.plugin._logger.info("Thump")
+                    self.plugin._logger.info("response: {}".format(response))
+                except Exception as e:
+                    self.plugin._logger.info("Exception with HB: {}".format(str(e)))
         self.plugin._logger.info("Heartbeat ended")
 
 
