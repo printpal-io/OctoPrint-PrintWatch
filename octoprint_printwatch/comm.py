@@ -12,7 +12,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
+DEFAULT_ROUTE = 'http://login-printpaldev.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
@@ -27,7 +27,17 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             }
 
 
-    def _create_payload(self, image):
+    def _heartbeat(self):
+        self.heartbeat = True
+        while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
+            if time() - self.parameters['last_t'] > 30.0:
+                response = self._send(heartbeat=True)
+                self._check_action(response)
+                self.parameters['last_t'] = time()
+
+
+
+    def _create_payload(self, image=None):
         settings = self.plugin._settings.get([])
         if not "confidence" in settings:
             settings["confidence"] = 60
@@ -40,22 +50,50 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             }).encode('utf8')
 
 
-    def email_notification(self):
-        if self.plugin._settings.get(["enable_email_notification"]):
-            self.parameters['nms'] = True
-            sleep(self.plugin.inferencer.REQUEST_INTERVAL)
-            self.send_request()
-            self.plugin._logger.info("Email notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
+    def _send(self, heartbeat=False):
+        if heartbeat:
+            data = self._create_payload()
+        else:
+            data = self._create_payload(b64encode(self.image).decode('utf8'))
+        inference_request = Request('{}/inference/'.format(
+            self.parameters['route']),
+            data=data,
+            method='POST'
+        )
+        return inference_request
+
+    def _check_action(self, response):
+        if eval(response['actionReceived']):
+            if response['actionType'] == 'pause':
+                while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or  self.plugin._printer.is_paused()):
+                    self.plugin._printer.pause_print()
+            elif response['actionType'] == 'stop':
+                while not (self.plugin._printer.is_cancelling() and self.plugin._printer.is_printing()):
+                    self.plugin._printer.cancel_print()
+            elif response['actionType'] == 'resume':
+                if self.plugin._printer.is_paused():
+                    while not self.plugin._printer.is_printing():
+                        self.plugin._printer.resume_print()
+
+    def start_service(self):
+        self.heartbeat = True
+        if self.plugin._settings.get(["enable_detector"]):
+            if self.plugin.inferencer.inference_loop is None and self.plugin.streamer.stream is not None:
+                self.heartbeat_loop = Thread(target=self._heartbeat)
+                self.heartbeat_loop.daemon = True
+                self.heartbeat_loop.start()
+                self.plugin._logger.info("PrintWatch heartbeat service started")
+
+    def kill_service(self):
+        self.heartbeat = False
+        self.heartbeat_loop = None
+        self.plugin._logger.info("PrintWatch inference service terminated")
 
     def send_request(self):
         with Lock():
             self.image = bytearray(self.plugin.streamer.jpg)
-        inference_request = Request('{}/inference/'.format(
-            self.parameters['route']),
-            data=self._create_payload(b64encode(self.image).decode('utf8')),
-            method='POST'
-        )
-        self.plugin._logger.info("Sending Inference...")
+        inference_request = self._send()
+
         try:
             response = loads(urlopen(inference_request).read())
             if response['statusCode'] == 200:
@@ -65,10 +103,11 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
-                self.plugin._logger.info("Response: {}".format(response))
+                self._check_action(response)
+
+
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
-                self.plugin._logger.info("Response: {}".format(response))
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
@@ -99,3 +138,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         pil_img.save(out_img, format='PNG')
         contents = b64encode(out_img.getvalue()).decode('utf8')
         return 'data:image/png;charset=utf-8;base64,' + contents.split('\n')[0]
+
+    def email_notification(self):
+        if self.plugin._settings.get(["enable_email_notification"]):
+            self.parameters['nms'] = True
+            sleep(self.plugin.inferencer.REQUEST_INTERVAL)
+            self.send_request()
+            self.plugin._logger.info("Email notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
