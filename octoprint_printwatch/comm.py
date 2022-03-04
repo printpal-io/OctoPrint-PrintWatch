@@ -35,6 +35,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 response = self._send(heartbeat=True)
                 self._check_action(response)
                 self.parameters['last_t'] = time()
+                self.plugin._logger.info("Thump")
+                self.plugin._logger.info("response: {}".format(response))
+        self.plugin._logger.info("Heartbeat ended")
 
 
 
