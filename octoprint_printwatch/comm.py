@@ -67,7 +67,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             data=data,
             method='POST'
         )
-        return inference_request
+        return loads(urlopen(inference_request).read())
 
     def _check_action(self, response):
         if eval(response['actionReceived']):
@@ -102,7 +102,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         inference_request = self._send()
 
         try:
-            response = loads(urlopen(inference_request).read())
+            response = self._send()
             if response['statusCode'] == 200:
                 self.plugin.inferencer.pred = eval(response['defect_detected'])
                 self.parameters['bad_responses'] = 0
