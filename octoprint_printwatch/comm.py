@@ -12,7 +12,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
+DEFAULT_ROUTE = 'http://login-printpaldev.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
@@ -55,7 +55,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             data=self._create_payload(b64encode(self.image).decode('utf8')),
             method='POST'
         )
-        self.plugin._logger.info("Sending Inference...")
+
         try:
             response = loads(urlopen(inference_request).read())
             if response['statusCode'] == 200:
@@ -65,10 +65,21 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
-                self.plugin._logger.info("Response: {}".format(response))
+                if eval(response['actionReceived']):
+                    if response['actionType'] == 'pause':
+                        while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or  self.plugin._printer.is_paused()):
+                            self.plugin._printer.pause_print()
+                    elif response['actionType'] == 'stop':
+                        while not (self.plugin._printer.is_cancelling() and self.plugin._printer.is_printing()):
+                            self.plugin._printer.cancel_print()
+                    elif response['actionType'] == 'resume':
+                        if self.plugin._printer.is_paused():
+                            while not self.plugin._printer.is_printing():
+                                self.plugin._printer.resume_print()
+
+
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
-                self.plugin._logger.info("Response: {}".format(response))
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
