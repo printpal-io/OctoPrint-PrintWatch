@@ -29,7 +29,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _create_payload(self, image):
         settings = self.plugin._settings.get([])
-        settings["api_key"] = settings["api_key"].replace(" ","")
         if not "confidence" in settings:
             settings["confidence"] = 60
         return dumps({
@@ -56,7 +55,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             data=self._create_payload(b64encode(self.image).decode('utf8')),
             method='POST'
         )
-
+        self.plugin._logger.info("Sending Inference...")
         try:
             response = loads(urlopen(inference_request).read())
             if response['statusCode'] == 200:
@@ -66,8 +65,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
+                self.plugin._logger.info("Response: {}".format(response))
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                self.plugin._logger.info("Response: {}".format(response))
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
