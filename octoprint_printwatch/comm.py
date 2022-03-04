@@ -34,6 +34,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             if time() - self.parameters['last_t'] > 30.0:
                 try:
                     response = self._send(heartbeat=True)
+                    self.plugin._logger.info("Response format: {}".format(response))
                     self._check_action(response)
                     self.parameters['last_t'] = time()
                     self.plugin._logger.info("Thump")
