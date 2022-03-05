@@ -101,7 +101,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def send_request(self):
         with Lock():
             self.image = bytearray(self.plugin.streamer.jpg)
-        inference_request = self._send()
 
         try:
             response = self._send()
