@@ -73,17 +73,16 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         return loads(urlopen(inference_request).read())
 
     def _check_action(self, response):
-        if eval(response['actionReceived']):
-            if response['actionType'] == 'pause':
-                while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or  self.plugin._printer.is_paused()):
-                    self.plugin._printer.pause_print()
-            elif response['actionType'] == 'stop':
-                while not (self.plugin._printer.is_cancelling() and self.plugin._printer.is_printing()):
-                    self.plugin._printer.cancel_print()
-            elif response['actionType'] == 'resume':
-                if self.plugin._printer.is_paused():
-                    while not self.plugin._printer.is_printing():
-                        self.plugin._printer.resume_print()
+        if response['actionType'] == 'pause':
+            while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or  self.plugin._printer.is_paused()):
+                self.plugin._printer.pause_print()
+        elif response['actionType'] == 'stop':
+            while not (self.plugin._printer.is_cancelling() and self.plugin._printer.is_printing()):
+                self.plugin._printer.cancel_print()
+        elif response['actionType'] == 'resume':
+            if self.plugin._printer.is_paused():
+                while not self.plugin._printer.is_printing():
+                    self.plugin._printer.resume_print()
 
     def start_service(self):
         self.heartbeat = True
