@@ -69,6 +69,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             data=data,
             method='POST'
         )
+        self.plugin._logger.info("FROM SEND: delta_t: {}".format(time() - self.parameters['last_t']))
         return loads(urlopen(inference_request).read())
 
     def _check_action(self, response):
@@ -116,7 +117,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
             elif response['statusCode'] == 213:
-                self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                self.plugin.inferencer.REQUEST_INTERVAL= 20.0
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1

@@ -30,7 +30,9 @@ class Inferencer():
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             if self.plugin._printer.is_printing() and not self.triggered:
-                if time() - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
+                now = time()
+                if now - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
+                    self.plugin._logger.info("Current Time: {}, last time: {}, delta t: {}".format(now, self.plugin.comm_manager.parameters['last_t'], now - self.plugin.comm_manager.parameters['last_t']))
                     if self.plugin.streamer.jpg is not None:
                         self.plugin.comm_manager.send_request()
                         self._buffer_check()
