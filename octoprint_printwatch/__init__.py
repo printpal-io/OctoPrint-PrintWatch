@@ -89,7 +89,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 self.inferencer.shutoff_event()
             self.inferencer.kill_service()
             self.streamer.kill_service()
-            self.comm_manager.start_service()
+            if event == Events.PAUSED:
+                self.comm_manager.start_service()
 
 
 
