@@ -18,6 +18,7 @@ DEFAULT_ROUTE = 'http://login-printpaldev.pythonanywhere.com'
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
         self.plugin = plugin
+        self.heartbeat_interval = 30.0
         self.parameters = {
                             'last_t' : 0.0,
                             'ip' : gethostbyname(gethostname()),
@@ -30,19 +31,15 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _heartbeat(self):
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
-            self.plugin._logger.info("{}    {}   {}".format(self.plugin._settings.get(["enable_detector"]), self.heartbeat, time() - self.parameters['last_t']))
-            if time() - self.parameters['last_t'] > 30.0:
+            if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 try:
-                    self.plugin._logger.info("Sending Heartbeat")
                     response = self._send(heartbeat=True)
-                    self.plugin._logger.info("Response format: {}".format(response))
                     self._check_action(response)
-                    self.plugin._logger.info("Thump")
-                    self.plugin._logger.info("response: {}".format(response))
                 except Exception as e:
-                    self.plugin._logger.info("Exception with HB: {}".format(str(e)))
+                    self.plugin._logger.info("Error with Heartbeat: {}".format(str(e)))
+
                 self.parameters['last_t'] = time()
-        self.plugin._logger.info("Heartbeat ended")
+        self.plugin._logger.info("Heartbeat loop closed")
 
 
 
@@ -64,17 +61,18 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             data = self._create_payload()
         else:
             data = self._create_payload(b64encode(self.image).decode('utf8'))
+
         inference_request = Request('{}/inference/'.format(
             self.parameters['route']),
             data=data,
             method='POST'
         )
-        self.plugin._logger.info("FROM SEND: delta_t: {}".format(time() - self.parameters['last_t']))
+
         return loads(urlopen(inference_request).read())
 
     def _check_action(self, response):
         if response['actionType'] == 'pause':
-            while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or  self.plugin._printer.is_paused()):
+            while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or self.plugin._printer.is_paused()):
                 self.plugin._printer.pause_print()
         elif response['actionType'] == 'stop':
             while not (self.plugin._printer.is_cancelling() and self.plugin._printer.is_printing()):
@@ -96,12 +94,11 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def kill_service(self):
         self.heartbeat = False
         self.heartbeat_loop = None
-        self.plugin._logger.info("PrintWatch inference service terminated")
+        self.plugin._logger.info("PrintWatch heartbeat service terminated")
 
     def send_request(self):
         with Lock():
             self.image = bytearray(self.plugin.streamer.jpg)
-
         try:
             response = self._send()
             if response['statusCode'] == 200:
@@ -112,10 +109,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
                 self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
                 self._check_action(response)
-
-
             elif response['statusCode'] == 213:
-                self.plugin.inferencer.REQUEST_INTERVAL= 20.0
+                self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
