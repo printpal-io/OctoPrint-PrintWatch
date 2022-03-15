@@ -2,7 +2,7 @@ import octoprint.plugin
 from threading import Thread
 from urllib.request import urlopen
 import ssl
-import time, sleep
+from time import time, sleep
 
 CTX = ssl.create_default_context()
 CTX.check_hostname = False
