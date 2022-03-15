@@ -1,5 +1,5 @@
 from threading import Thread
-from time import time
+from time import time, sleep
 
 class Inferencer():
     def __init__(self, plugin):
@@ -30,7 +30,8 @@ class Inferencer():
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             if self.plugin._printer.is_printing() and not self.triggered:
-                if time() - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
+                time_delta = time() - self.plugin.comm_manager.parameters['last_t']
+                if time_delta > self.REQUEST_INTERVAL:
                     if self.plugin.streamer.jpg is not None:
                         self.plugin.comm_manager.send_request()
                         self._buffer_check()
@@ -41,6 +42,8 @@ class Inferencer():
                                 if pause_condition:
                                     self.plugin._logger.info("Failure Detected. Pausing Print.")
                                     self._attempt_pause()
+                else:
+                    sleep(self.REQUEST_INTERVAL - time_delta)
 
                 if self.plugin.comm_manager.parameters['bad_responses'] >= int(self.plugin._settings.get(["buffer_length"])):
                     self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")

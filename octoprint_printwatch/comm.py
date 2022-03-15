@@ -31,7 +31,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _heartbeat(self):
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
-            if time() - self.parameters['last_t'] > self.heartbeat_interval:
+            time_delta = time() - self.parameters['last_t']
+            if time_delta > self.heartbeat_interval:
                 try:
                     response = self._send(heartbeat=True)
                     self._check_action(response)
@@ -39,6 +40,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     self.plugin._logger.info("Error with Heartbeat: {}".format(str(e)))
 
                 self.parameters['last_t'] = time()
+            else:
+                sleep(self.heartbeat_interval - time_delta)
         self.plugin._logger.info("Heartbeat loop closed")
 
 

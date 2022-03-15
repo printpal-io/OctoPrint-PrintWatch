@@ -2,7 +2,7 @@ import octoprint.plugin
 from threading import Thread
 from urllib.request import urlopen
 import ssl
-from time import time
+import time, sleep
 
 CTX = ssl.create_default_context()
 CTX.check_hostname = False
@@ -55,5 +55,7 @@ class VideoStreamer(octoprint.plugin.SettingsPlugin):
                     if self.a != -1 and self.b != -1:
                         self.jpg = self.bytes[self.a:self.b+2]
                         self.bytes = self.bytes[self.b+2:]
+                else:
+                    sleep(1)
             else:
                 self.stream = urlopen(self.plugin._settings.get(["stream_url"]), context = CTX)
