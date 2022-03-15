@@ -71,14 +71,14 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:
             self.streamer.start_service()
-            self.inferencer.start_service()
-            self.comm_manager.kill_service()
+            #self.inferencer.start_service()
+            #self.comm_manager.kill_service()
         elif event == Events.PRINT_RESUMED:
             if self.inferencer.triggered:
                 self.controller.restart()
             self.streamer.start_service()
-            self.inferencer.start_service()
-            self.comm_manager.kill_service()
+            #self.inferencer.start_service()
+            #self.comm_manager.kill_service()
         elif event in (
             Events.PRINT_PAUSED,
             Events.PRINT_CANCELLED,
@@ -87,13 +87,14 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             ):
             if self.inferencer.triggered:
                 self.inferencer.shutoff_event()
-            self.inferencer.kill_service()
+            #self.inferencer.kill_service()
             self.streamer.kill_service()
+            '''
             if event == Events.PRINT_PAUSED:
                 self.comm_manager.start_service()
             else:
                 self.comm_manager.kill_service()
-
+            '''
 
 
     def on_shutdown(self):
