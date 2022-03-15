@@ -29,6 +29,7 @@ class Inferencer():
     def _inferencing(self):
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
+            sleep(0.1) #prevent cpu overload
             if self.plugin._printer.is_printing() and not self.triggered:
                 time_delta = time() - self.plugin.comm_manager.parameters['last_t']
                 if time_delta > self.REQUEST_INTERVAL:
@@ -42,8 +43,7 @@ class Inferencer():
                                 if pause_condition:
                                     self.plugin._logger.info("Failure Detected. Pausing Print.")
                                     self._attempt_pause()
-                else:
-                    sleep(self.REQUEST_INTERVAL - time_delta)
+
 
                 if self.plugin.comm_manager.parameters['bad_responses'] >= int(self.plugin._settings.get(["buffer_length"])):
                     self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
