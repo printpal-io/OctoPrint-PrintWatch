@@ -13,7 +13,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'http://login-printpaldev.pythonanywhere.com'
+DEFAULT_ROUTE = 'http://printwatch-printpal.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
@@ -52,7 +52,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'settings' : settings,
                             'parameters' : self.parameters,
                             'job' : self.plugin._printer.get_current_job(),
-                            'data' : self.plugin._printer.get_current_data()
+                            'data' : self.plugin._printer.get_current_data(),
+                            'state' : self.plugin._printer.get_state_id()
                             }).encode('utf8')
 
 
