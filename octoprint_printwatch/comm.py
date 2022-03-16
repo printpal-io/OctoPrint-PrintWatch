@@ -103,6 +103,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             self.image = bytearray(self.plugin.streamer.jpg)
         try:
             response = self._send()
+            self.parameters['last_t'] = time()
             if response['statusCode'] == 200:
                 self.plugin.inferencer.pred = eval(response['defect_detected'])
                 self.parameters['bad_responses'] = 0
@@ -124,7 +125,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             self.plugin._logger.info("Error retrieving server response: {}".format(str(e)))
             self.parameters['bad_responses'] += 1
             self.plugin.inferencer.pred = False
-        self.parameters['last_t'] = time()
+            self.parameters['last_t'] = time()
 
     def draw_boxes(self, boxes):
         pil_img = Image.open(io.BytesIO(self.image))
