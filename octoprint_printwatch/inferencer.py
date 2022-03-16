@@ -31,8 +31,7 @@ class Inferencer():
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(0.1) #prevent cpu overload
             if self.plugin._printer.is_printing() and not self.triggered:
-                time_delta = time() - self.plugin.comm_manager.parameters['last_t']
-                if time_delta > self.REQUEST_INTERVAL:
+                if time() - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
                     if self.plugin.streamer.jpg is not None:
                         self.plugin.comm_manager.send_request()
                         self._buffer_check()
