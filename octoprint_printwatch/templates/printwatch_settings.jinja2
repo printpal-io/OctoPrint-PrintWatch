@@ -81,7 +81,7 @@
         <div><small><a href="#" class="muted" data-bind="toggleContent: { class: 'fa-caret-right fa-caret-down', parent: '.advanced_options', container: '.hide' }"><i class="fas fa-caret-right"></i> {{ _('Advanced options') }}</a></small></div>
           <div class="hide">
             <div class="control-group">
-              <label class="control-label">{{ _('Buffer length') }}</label>
+              <label class="control-label">{{ _('Buffer Length') }}</label>
                 <div class="controls">
                   <input type="range" min="8" max="128" class="slider" id="buffer_length" style='display:inline-block' data-bind="value: settings.plugins.printwatch.buffer_length" oninput="updateDisplayBuffer();">
                   <label class="range" id="displayBuffer" style='display:inline-block'>
@@ -95,7 +95,7 @@
           }
           </script>
           <div class="control-group">
-            <label class="control-label">{{ _('Buffer length') }}</label>
+            <label class="control-label">{{ _('Buffer Percent') }}</label>
               <div class="controls">
                 <input type="range" min="0" max="100" class="slider" id="buffer_percent" style='display:inline-block' data-bind="value: settings.plugins.printwatch.buffer_percent" oninput="updateDisplayBufferPercent();">
                 <label class="range" id="displayBufferPercent" style='display:inline-block'>

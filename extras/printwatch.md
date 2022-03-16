@@ -78,10 +78,11 @@ PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defect
 - 🔥 Turning off the Extruder Heat
 - ⚙ Customized actions created by the user
 
-PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs.
+PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
 Current features include:
 
 - Real-time defect detection
+- Remote access and management
 - Anomalous Printer Detection
 - Advanced Analytics
 - Resume Print
