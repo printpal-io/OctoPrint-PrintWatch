@@ -1,8 +1,5 @@
 from threading import Thread
-from time import time
-
-BUFFER_LENGTH = 16
-BUFFER_PERCENTAGE = 0.80
+from time import time, sleep
 
 class Inferencer():
     def __init__(self, plugin):
@@ -21,7 +18,7 @@ class Inferencer():
         else:
             self.circular_buffer.append([False, time()])
 
-        if len(self.circular_buffer) > BUFFER_LENGTH:
+        while len(self.circular_buffer) > int(self.plugin._settings.get(["buffer_length"])):
             self.circular_buffer.pop(0)
 
     def _attempt_pause(self):
@@ -32,21 +29,22 @@ class Inferencer():
     def _inferencing(self):
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
+            sleep(0.1) #prevent cpu overload
             if self.plugin._printer.is_printing() and not self.triggered:
                 if time() - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
                     if self.plugin.streamer.jpg is not None:
                         self.plugin.comm_manager.send_request()
                         self._buffer_check()
-
-                        if len(self.circular_buffer) == BUFFER_LENGTH:
-                            self.current_percent = [i[0] for i in self.circular_buffer].count(True) / BUFFER_LENGTH
-                            if self.current_percent >= BUFFER_PERCENTAGE:
+                        if len(self.circular_buffer) == int(self.plugin._settings.get(["buffer_length"])):
+                            self.current_percent = [i[0] for i in self.circular_buffer].count(True) / int(self.plugin._settings.get(["buffer_length"]))
+                            if self.current_percent >= int(self.plugin._settings.get(["buffer_percent"])) / 100.0:
                                 pause_condition = (not self.triggered or (not self.plugin._printer.is_pausing() and self.plugin._printer.is_printing())) and self.plugin._settings.get(["enable_shutoff"])
                                 if pause_condition:
                                     self.plugin._logger.info("Failure Detected. Pausing Print.")
                                     self._attempt_pause()
 
-                if self.plugin.comm_manager.parameters['bad_responses'] >= BUFFER_LENGTH:
+
+                if self.plugin.comm_manager.parameters['bad_responses'] >= int(self.plugin._settings.get(["buffer_length"])):
                     self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
                     self.plugin.streamer.kill_service()
                     self.kill_service()

@@ -31,13 +31,14 @@
 </ul>
 
 <p>
-  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs.
+  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
 </p>
 <p>
     Current features include:
 </p>
 <ul>
   <li>Real-time defect detection</li>
+  <li>Remote access and management</li>
   <li>Anomalous Printer Detection</li>
   <li>Advanced Analytics</li>
   <li>Resume Print</li>
@@ -160,6 +161,22 @@
     </td>
     <td>
       The threshold at which detections are to be classified as defects. This can be considered the sensitivity of the detection system
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Buffer Length
+    </td>
+    <td>
+      The buffer size to use for tracking defects
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Buffer Percent
+    </td>
+    <td>
+      The percentage of positive detections required to trigger a shutoff event
     </td>
   </tr>
   <tr>

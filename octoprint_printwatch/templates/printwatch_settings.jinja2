@@ -77,6 +77,40 @@
     </td>
     </tr>
     </table>
+      <div class="advanced_options">
+        <div><small><a href="#" class="muted" data-bind="toggleContent: { class: 'fa-caret-right fa-caret-down', parent: '.advanced_options', container: '.hide' }"><i class="fas fa-caret-right"></i> {{ _('Advanced options') }}</a></small></div>
+          <div class="hide">
+            <div class="control-group">
+              <label class="control-label">{{ _('Buffer Length') }}</label>
+                <div class="controls">
+                  <input type="range" min="8" max="128" class="slider" id="buffer_length" style='display:inline-block' data-bind="value: settings.plugins.printwatch.buffer_length" oninput="updateDisplayBuffer();">
+                  <label class="range" id="displayBuffer" style='display:inline-block'>
+                  </label>
+                  <div class="help-block">{{ _('Number of detections to store for evaluating a shutoff event.') }}</div>
+              </div>
+          </div>
+          <script>
+          function updateDisplayBuffer(){
+            document.getElementById("displayBuffer").innerText = document.getElementById("buffer_length").value;
+          }
+          </script>
+          <div class="control-group">
+            <label class="control-label">{{ _('Buffer Percent') }}</label>
+              <div class="controls">
+                <input type="range" min="0" max="100" class="slider" id="buffer_percent" style='display:inline-block' data-bind="value: settings.plugins.printwatch.buffer_percent" oninput="updateDisplayBufferPercent();">
+                <label class="range" id="displayBufferPercent" style='display:inline-block'>
+                </label>
+                <div class="help-block">{{ _('Percentage of the buffer containing positive detections to trigger a shutoff event.') }}</div>
+            </div>
+        </div>
+        <script>
+        function updateDisplayBufferPercent(){
+          document.getElementById("displayBufferPercent").innerText = document.getElementById("buffer_percent").value;
+        }
+        </script>
+
+          </div>
+      </div>
 </form>
 <li style="display:inline"><a href="https://printpal.io/" target="_blank" rel="noreferrer noopener"><i class="fas fa-home"></i> {{ _('Website') }}</a></li>
 <li style="display:inline"><a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener"><i class="fab fa-github-square"></i> {{ _('Github') }}</a></li>
