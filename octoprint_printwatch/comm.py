@@ -31,7 +31,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _heartbeat(self):
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
-            sleep(0.1) #precent cpu overload
+            sleep(0.1) #prevent cpu overload
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 try:
                     response = self._send(heartbeat=True)

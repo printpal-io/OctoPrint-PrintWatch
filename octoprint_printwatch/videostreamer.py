@@ -47,7 +47,7 @@ class VideoStreamer(octoprint.plugin.SettingsPlugin):
         while self.stream_enabled and self.plugin._settings.get(["enable_detector"]):
             if self.stream.status == 200:
                 sleep(0.1) #prevent cpu overload
-                self.bytes += self.stream.read(65536)
+                self.bytes += self.stream.read(262144)
                 self.b = self.bytes.rfind(b'\xff\xd9')
                 self.a = self.bytes.rfind(b'\xff\xd8', 0, self.b)
                 if self.a != -1 and self.b != -1:
