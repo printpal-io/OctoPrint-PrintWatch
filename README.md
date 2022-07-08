@@ -25,7 +25,7 @@
 </p>
 <ul>
   <li>📧 Email/SMS Notification</li>
-  <li>⏸ Pausing the print job</li>
+  <li>⏸ Pausing/Stopping the print job</li>
   <li>🔥 Turning off the Extruder Heat</li>
   <li>⚙ Customized actions created by the user</li>
 </ul>
@@ -48,6 +48,9 @@
     Upcoming features include:
 </p>
 <ul>
+  <li>Pre+post print bed check</li>
+  <li>Live QC/QA</li>
+  <li>Web Application re-work</li>
   <li>G-Code and Speed optimization with ML</li>
   <li>MultiCamming</li>
   <li>ROI selection and slicing</li>
