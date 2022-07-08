@@ -120,10 +120,10 @@
   </tr>
   <tr>
     <td>
-      Stream URL
+      Snapshot URL
     </td>
     <td>
-      The stream address of your camera
+      The webcam snapshot address of your camera
     </td>
   </tr>
   <tr>
@@ -152,6 +152,14 @@
   </tr>
   <tr>
     <td>
+      Stop Print on Detection
+    </td>
+    <td>
+      Toggle whether the print is stopped on detection
+    </td>
+  </tr>
+  <tr>
+    <td>
       Power off Extruder on Detection
     </td>
     <td>
@@ -168,6 +176,22 @@
   </tr>
   <tr>
     <td>
+      Notification Threshold
+    </td>
+    <td>
+      The threshold at which a notification is sent to the user.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Action Threshold
+    </td>
+    <td>
+      The threshold at which an action is taken on behalf of the printer.
+    </td>
+  </tr>
+  <tr>
+    <td>
       Buffer Length
     </td>
     <td>
@@ -176,7 +200,7 @@
   </tr>
   <tr>
     <td>
-      Buffer Percent
+      Buffer Percent*
     </td>
     <td>
       The percentage of positive detections required to trigger a shutoff event
@@ -191,7 +215,9 @@
     </td>
   </tr>
 </table>
-
+<p>
+    <b>*</b> this setting has been removed in newer versions
+</p>
 <p>
     To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
 </p>
