@@ -1,10 +1,13 @@
 <img src="plugin/printwatch/static/img/printwatch_logo.png" alt="printpal.io printwatch logo" />
-<h3>{{ _('PrintWatch preview') }}</h3>
-
-<div id="reload"  style="background-color:black;width:100%;aspect-ratio:19/9;text-align:center;color:white">
-
-    <img id="frame" alt="Stream starts 5 minutes into the print..." data-bind="attr:{src: contents}" />
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+<div id="top-container" class="tab-content">
+  <h4>{{ _('PrintWatch detection preview') }}</h4>
+  <div id="reload" style="background-color:black;width:100%;aspect-ratio:19/9;text-align:center;color:white">
+      <img id="frame" alt="Stream starts 5 minutes into the print..." data-bind="attr:{src: contents}" />
+  </div>
+</div>
+<div id="level-container" class="tab-content">
+  <canvas id="livePlot" width="600" height="300"></canvas>
 </div>
 <div style="margin-top:1%">
     <li style="display:inline"><a href="https://printpal.io/" target="_blank" rel="noreferrer noopener"><i class="fas fa-home"></i> {{ _('Website') }}</a></li>

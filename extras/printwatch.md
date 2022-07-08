@@ -41,13 +41,16 @@ tags:
 
 
 screenshots:
+- url: /assets/img/plugins/printwatch/printwatch-tab.jpg
+  alt: PrintWatch monitors your prints with Artificial Intelligence and saves you time and material
+  caption: PrintWatch watches your prints and shows you the status of your print in real-time
 - url: /assets/img/plugins/printwatch/printwatch.png
   alt: PrintWatch monitors your prints with Artificial Intelligence and saves you time and material
   caption: PrintWatch monitors your prints with Artificial Intelligence
 - url: /assets/img/plugins/printwatch/printwatch-notification.png
   alt: Get notified when something goes wrong with your print. Reduce downtime and loss
   caption: PrintWatch notifies you when something goes wrong. Let AI do the watching for you while you enjoy your day
-- url: /assets/img/plugins/printwatch/printwatch-settings.png
+- url: /assets/img/plugins/printwatch/printwatch-settings.jpg
   alt: Configurable settings allow you to customize how PrintWatch works for you.
   caption: Configure your settings the way you like.
 
@@ -57,7 +60,7 @@ featuredimage: /assets/img/plugins/printwatch/printwatch.png
 compatibility:
 
   octoprint:
-  - 1.3.2
+  - 1.8.1
 
   os:
   - linux
@@ -74,7 +77,7 @@ compatibility:
 PrintWatch uses Artificial Intelligence to monitor your 3D prints for any defects that begin to form. The plugin takes the video feed from any camera compatible with OctoPrint and runs it through a Machine Learning model that detects print defects in real-time. The plugin takes actions set by the user once a failure is positively detected that include:
 
 - 📧 Email/SMS Notification
-- ⏸ Pausing the print job
+- ⏸ Pausing/Stopping the print job
 - 🔥 Turning off the Extruder Heat
 - ⚙ Customized actions created by the user
 
@@ -89,6 +92,8 @@ Current features include:
 
 Upcoming features include:
 
+- Pre+post print bed check
+- Live QC/QA
 - G-Code and Speed optimization with ML
 - MultiCamming
 - ROI selection and slicing

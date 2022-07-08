@@ -24,7 +24,7 @@ class PrinterControl():
         self._apply_temperatures()
 
 
-    def shutoff_actions(self):
-        self.plugin._logger.info("Print has paused.")
+    def shutoff_actions(self, extruders=False):
         self._temperatures = self.plugin._printer.get_current_temperatures()
-        self._extruder_set()
+        if extruders:
+            self._extruder_set()

@@ -8,7 +8,7 @@
         <img alt="Documentation" src="https://img.shields.io/badge/website-online-brightgreen">
     </a>
     <a href="https://github.com/printpal-io/OctoPrint-PrintWatch/releases">
-        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.0.20-blue">
+        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.1.1-blue">
     </a>
     <a href="https://printpal.pythonanywhere.com/api/status">
         <img alt="API Status" src="https://img.shields.io/badge/API-online-brightgreen">
