@@ -82,7 +82,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         if event == Events.PRINT_STARTED:
             self.inferencer.start_service()
             self.comm_manager.kill_service()
-            self.comm_manager.new_tcket()
+            self.comm_manager.new_ticket()
             self._plugin_manager.send_plugin_message(self._identifier, dict(type="resetPlot"))
         elif event == Events.PRINT_RESUMED:
             if self.inferencer.triggered:
