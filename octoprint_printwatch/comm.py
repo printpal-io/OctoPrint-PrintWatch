@@ -164,5 +164,5 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             except Exception as e:
                 self.plugin._logger.info("Error retrieving server response for email notification: {}".format(str(e)))
 
-    def new_tcket(self):
+    def new_ticket(self):
         self._create_ticket()

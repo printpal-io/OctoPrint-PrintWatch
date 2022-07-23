@@ -9,6 +9,22 @@
 <div id="level-container" class="tab-content">
   <canvas id="livePlot" width="600" height="300"></canvas>
 </div>
+<div>
+<button class="btn span4" id="job_pause" data-bind="click: sendFeedback()">
+<label for="class_type">{{ _('Defect Type') }}</label>
+<select id="class_type" data-test-id="class-types" >
+  <option value="stringing">Stringing</option>
+  <option value="spaghetti">Spaghetti</option>
+  <option value="blobbing">Blobbing</option>
+  <option value="no-extrusion">No Extrusion</option>
+  <option value="stringing">Under Extrusion</option>
+  <option value="spaghetti">Over Extrusion</option>
+  <option value="blobbing">Warping</option>
+  <option value="no-extrusion">Layer Shift</option>
+  <option value="no-extrusion">Other</option>
+</select>
+</div>
+<button class="btn span4" id="job_pause" data-bind="click: function()">
 <div style="margin-top:1%">
     <li style="display:inline"><a href="https://printpal.io/" target="_blank" rel="noreferrer noopener"><i class="fas fa-home"></i> {{ _('Website') }}</a></li>
     <li style="display:inline"><a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener"><i class="fab fa-github-square"></i> {{ _('Github') }}</a></li>
