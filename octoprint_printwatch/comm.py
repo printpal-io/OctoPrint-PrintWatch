@@ -62,7 +62,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     def _force_settings_dict(self):
         return dict(
-            [(key, self.plugin._settings.get(key, ele)) for key, ele in self.plugin.get_settings_defaults()]
+            [(key, self.plugin._settings.get(key, ele)) for key, ele in self.plugin.get_settings_defaults().items()]
         )
 
     def _send(self, endpoint='inference'):
