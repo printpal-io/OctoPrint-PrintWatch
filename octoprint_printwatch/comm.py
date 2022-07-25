@@ -47,9 +47,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
     def _create_payload(self, image=None):
+        self.plugin._logger.info("All settings: {}".format(self._force_settings_dict()))
         return dumps({
                     'image_array' : image,
-                    'settings' : self.plugin._settings.get([]),
+                    'settings' : self._force_settings_dict(),
                     'parameters' : self.parameters,
                     'job' : self.plugin._printer.get_current_job(),
                     'data' : self.plugin._printer.get_current_data(),
@@ -58,6 +59,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     'scores' : self.plugin.inferencer.scores
                 }).encode('utf8')
 
+    def _force_settings_dict(self):
+        return dict(
+            [(key, self.plugin._settings.get(key, ele)) for key, ele in self.plugin.get_settings_defaults()]
+        )
 
     def _send(self, endpoint='inference'):
         data = self._create_payload() if endpoint =='heartbeat' else self._create_payload(b64encode(self.image).decode('utf8'))
