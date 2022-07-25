@@ -14,7 +14,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'https://ai.simplyprint.io'
+DEFAULT_ROUTE = 'https://printwatch-printpal.pythonanywhere.com'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
