@@ -1,7 +1,8 @@
 <img src="plugin/printwatch/static/img/printwatch_logo.png" alt="printpal.io printwatch logo" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
 <div id="top-container" class="tab-content">
-  <h4>{{ _('PrintWatch detection preview') }}</h4>
+<h4>{{ _('PrintWatch detection preview') }}</h4>
+<div>
   <div id="reload" style="background-color:black;width:100%;aspect-ratio:19/9;text-align:center;color:white">
       <img id="frame" alt="Stream starts 5 minutes into the print..." data-bind="attr:{src: contents}" />
   </div>
@@ -9,22 +10,23 @@
 <div id="level-container" class="tab-content">
   <canvas id="livePlot" width="600" height="300"></canvas>
 </div>
-<div>
-<button class="btn span4" id="job_pause" data-bind="click: sendFeedback()">
-<label for="class_type">{{ _('Defect Type') }}</label>
-<select id="class_type" data-test-id="class-types" >
-  <option value="stringing">Stringing</option>
-  <option value="spaghetti">Spaghetti</option>
-  <option value="blobbing">Blobbing</option>
-  <option value="no-extrusion">No Extrusion</option>
-  <option value="stringing">Under Extrusion</option>
-  <option value="spaghetti">Over Extrusion</option>
-  <option value="blobbing">Warping</option>
-  <option value="no-extrusion">Layer Shift</option>
-  <option value="no-extrusion">Other</option>
-</select>
+<span style="display:inline-block">
+<label for="btn btn-primary">{{ _('Is there a defect present in the webcam stream? Send feedback so the Machine Learning model will spot it next time') }}</label>
+  <button class="btn btn-primary" data-bind="click: sendFeedback">{{ _('Send Feedback') }}</button>
+  <label for="class_type">{{ _('Defect Type') }}</label>
+  <select id="class_type" data-test-id="class-types">
+    <option value="stringing">Stringing</option>
+    <option value="spaghetti">Spaghetti</option>
+    <option value="blobbing">Blobbing</option>
+    <option value="no-extrusion">No Extrusion</option>
+    <option value="under-extrusion">Under Extrusion</option>
+    <option value="over-extrusion">Over Extrusion</option>
+    <option value="warping">Warping</option>
+    <option value="layer-shift">Layer Shift</option>
+    <option value="other">Other</option>
+  </select>
+  </span>
 </div>
-<button class="btn span4" id="job_pause" data-bind="click: function()">
 <div style="margin-top:1%">
     <li style="display:inline"><a href="https://printpal.io/" target="_blank" rel="noreferrer noopener"><i class="fas fa-home"></i> {{ _('Website') }}</a></li>
     <li style="display:inline"><a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener"><i class="fab fa-github-square"></i> {{ _('Github') }}</a></li>

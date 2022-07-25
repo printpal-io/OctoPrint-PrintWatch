@@ -7,7 +7,9 @@ class PrinterControl():
     def _extruder_set(self, temperature=0):
         for extruder in range(self.plugin._printer_profile_manager.get_current().get('extruder').get('count', 1)):
             self.plugin._printer.set_temperature('tool{}'.format(extruder), temperature)
-            self.plugin._logger.info("Temperature has been set to {} for tool {}".format(temperature, extruder))
+            self.plugin._logger.info(
+                "Temperature has been set to {} for tool {}".format(temperature, extruder)
+            )
 
 
     def _apply_temperatures(self):

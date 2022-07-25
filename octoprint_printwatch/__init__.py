@@ -12,7 +12,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.TemplatePlugin,
                            octoprint.plugin.SettingsPlugin,
                            octoprint.plugin.AssetPlugin,
-                           octoprint.plugin.EventHandlerPlugin
+                           octoprint.plugin.EventHandlerPlugin,
+                           octoprint.plugin.SimpleApiPlugin
                            ):
 
 
@@ -22,7 +23,23 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
         self.controller = PrinterControl(self)
+        self._logger.info("Settings: {}".format(self._settings.get([])))
+        self._logger.info("Settings @ api key: {}".format(self._settings.get(["api_key"])))
+        self._logger.info("Settings @ confidence: {}".format(self._settings.get(["confidence"])))
 
+    def get_api_commands(self):
+        return dict(
+            sendFeedback=[]
+        )
+
+    def on_api_command(self, command, data):
+        if command == 'sendFeedback':
+            self.comm_manager.send_feedback(data.get("class"))
+            self._logger.info(
+                "Defect report sending to server for type: {}".format(data.get("class"))
+            )
+            return
+        return
 
     def get_update_information(self):
         return dict(
@@ -45,7 +62,11 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         if self.inferencer.warning_notification:
             self.inferencer.begin_cooldown()
         self._settings.save()
+        self._logger.info("Settings: {}".format(self._settings.get([])))
+        self._logger.info("Settings @ api key: {}".format(self._settings.get(["api_key"])))
+        self._logger.info("Settings @ confidence: {}".format(self._settings.get(["confidence"])))
         self._plugin_manager.send_plugin_message(self._identifier, dict(type="onSave"))
+
 
     def get_settings_defaults(self):
         return dict(
@@ -83,7 +104,10 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             self.inferencer.start_service()
             self.comm_manager.kill_service()
             self.comm_manager.new_ticket()
-            self._plugin_manager.send_plugin_message(self._identifier, dict(type="resetPlot"))
+            self._plugin_manager.send_plugin_message(
+                self._identifier,
+                dict(type="resetPlot")
+            )
         elif event == Events.PRINT_RESUMED:
             if self.inferencer.triggered:
                 self.controller.restart()
@@ -103,7 +127,10 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 self.comm_manager.start_service()
             else:
                 self.comm_manager.kill_service()
-                self._plugin_manager.send_plugin_message(self._identifier, dict(type="resetPlot"))
+                self._plugin_manager.send_plugin_message(
+                    self._identifier,
+                    dict(type="resetPlot")
+                )
 
 
 

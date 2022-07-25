@@ -22,7 +22,14 @@ class Inferencer():
     def _buffer_check(self):
         buffer_length = int(self.plugin._settings.get(["buffer_length"]))
         if len(self.smas) > 0:
-            self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="score", scores=self.smas[-1], pop=len(self.scores) > int(buffer_length * MAX_MULTIPLIER)))
+            self.plugin._plugin_manager.send_plugin_message(
+                self.plugin._identifier,
+                dict(
+                    type="score",
+                    scores=self.smas[-1],
+                    pop=len(self.scores) > int(buffer_length * MAX_MULTIPLIER)
+                )
+            )
         while len(self.circular_buffer) > buffer_length:
             self.circular_buffer.pop(0)
         while len(self.scores) > int(buffer_length * MAX_MULTIPLIER):
@@ -58,7 +65,9 @@ class Inferencer():
             self.plugin._printer.cancel_print()
         else:
             self.plugin._printer.pause_print()
-        self.plugin._logger.info("Print {} command sent to OctoPrint.".format(action))
+        self.plugin._logger.info(
+            "Print {} command sent to OctoPrint.".format(action)
+        )
 
 
     def _inferencing(self):
@@ -85,7 +94,13 @@ class Inferencer():
                 self.inference_loop.daemon = True
                 self.inference_loop.start()
                 self.plugin._logger.info("PrintWatch inference service started")
-                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
+                self.plugin._plugin_manager.send_plugin_message(
+                    self.plugin._identifier,
+                    dict(
+                        type="icon",
+                        icon='plugin/printwatch/static/img/printwatch-green.gif'
+                    )
+                )
 
     def kill_service(self):
         self.run_thread = False
@@ -97,7 +112,13 @@ class Inferencer():
         self.scores = []
         self.current_percent = 0.0
         self.plugin._logger.info("PrintWatch inference service terminated")
-        self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-grey.png'))
+        self.plugin._plugin_manager.send_plugin_message(
+            self.plugin._identifier,
+            dict(
+                type="icon",
+                icon='plugin/printwatch/static/img/printwatch-grey.png'
+            )
+        )
 
     def shutoff_event(self):
         self.plugin.controller.shutoff_actions(self.plugin._settings.get(["enable_extruder_shutoff"]))

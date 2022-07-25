@@ -14,7 +14,7 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'https://printwatch-printpal.pythonanywhere.com'
+DEFAULT_ROUTE = 'https://ai.simplyprint.io'
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
@@ -39,7 +39,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     response = self._send('heartbeat')
                     self._check_action(response)
                 except Exception as e:
-                    self.plugin._logger.info("Error with Heartbeat: {}".format(str(e)))
+                    self.plugin._logger.info(
+                        "Error with Heartbeat: {}".format(str(e))
+                    )
 
                 self.parameters['last_t'] = time()
         self.plugin._logger.info("Heartbeat loop closed")
@@ -47,7 +49,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
     def _create_payload(self, image=None):
-        self.plugin._logger.info("All settings: {}".format(self._force_settings_dict()))
         return dumps({
                     'image_array' : image,
                     'settings' : self._force_settings_dict(),
@@ -91,7 +92,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def _create_ticket(self):
         ticket = uuid4().hex
         self.parameters['ticket'] = ticket
-        self.plugin._logger.info("Ticket {} created for print job".format(ticket))
+        self.plugin._logger.info(
+            "Ticket {} created for print job".format(ticket)
+        )
 
     def _appends(self, response):
         self.plugin.inferencer.circular_buffer.append([eval(response['defect_detected']), time()])
@@ -124,19 +127,40 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
-                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="display_frame", image=self.draw_boxes(boxes)))
-                self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="icon", icon='plugin/printwatch/static/img/printwatch-green.gif'))
+                self.plugin._plugin_manager.send_plugin_message(
+                    self.plugin._identifier,
+                    dict(
+                        type="display_frame",
+                        image=self.draw_boxes(boxes)
+                    )
+                )
+                self.plugin._plugin_manager.send_plugin_message(
+                    self.plugin._identifier,
+                    dict(
+                        type="icon",
+                        icon='plugin/printwatch/static/img/printwatch-green.gif'
+                    )
+                )
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
-                self.plugin._logger.info("Payload: {} {}".format(self.plugin._settings.get([]), self.parameters))
-                self.plugin._logger.info("Response: {}".format(response))
+                self.plugin._logger.info(
+                    "Payload: {} {}".format(
+                        self.plugin._settings.get([]),
+                        self.parameters
+                    )
+                )
+                self.plugin._logger.info(
+                    "Response: {}".format(response)
+                )
 
         except Exception as e:
-            self.plugin._logger.info("Error retrieving server response: {}".format(str(e)))
+            self.plugin._logger.info(
+                "Error retrieving server response: {}".format(str(e))
+            )
             self.parameters['bad_responses'] += 1
             self.plugin.inferencer.pred = False
             self.parameters['last_t'] = time()
@@ -165,9 +189,33 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.parameters['notification'] = notification_level
                 self.parameters['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
                 response = self._send('notify')
-                self.plugin._logger.info("Notification sent to {}".format(self.plugin._settings.get(["email_addr"])))
+                self.plugin._logger.info(
+                    "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
+                )
             except Exception as e:
-                self.plugin._logger.info("Error retrieving server response for email notification: {}".format(str(e)))
+                self.plugin._logger.info(
+                    "Error retrieving server response for email notification: {}".format(str(e))
+                )
+
+    def send_feedback(self, classification):
+        self.parameters['feedback'] = {
+            'feedback' : True,
+            'time' : time(),
+            'class' : classification
+        }
+        try:
+            self.image = self.plugin.streamer.grab_frame()
+            response = self._send('feedback')
+            self.plugin._logger.info(
+                "Feedback sent for defect identified as: {}".format(classification)
+            )
+        except Exception as e:
+            self.plugin._logger.info(
+                "Error retrieving server response for feedback sending: {}".format(str(e))
+            )
+        return
+
+
 
     def new_ticket(self):
         self._create_ticket()

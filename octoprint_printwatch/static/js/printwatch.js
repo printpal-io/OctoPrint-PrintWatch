@@ -48,9 +48,12 @@ $(function() {
           return ;
         }
 
-        self.sendFeedback() {
-          classification = document.getElementById('class_type').text;
-          OctoPrint.simpleApiCommand("printwatch", "sendFeedback", {class: classification})
+        self.sendFeedback = function() {
+          classification = document.getElementById('class_type').value;
+          OctoPrint.simpleApiCommand("printwatch", "sendFeedback", {"class": classification})
+                  .done(function(response) {
+              return
+          });
         }
 
         self.renderChart = function(chart, data, pop) {
