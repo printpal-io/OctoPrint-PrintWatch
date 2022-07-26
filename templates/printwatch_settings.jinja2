@@ -1,0 +1,202 @@
+<img src="plugin/printwatch/static/img/printwatch_logo.png" alt="printpal.io printwatch logo" />
+<h3>{{ _('PrintWatch Settings') }}</h3>
+<form class="form-horizontal" onsubmit="return false;">
+  <div id='nav-settings'>
+    <ul class="nav nav-pills">
+      <li class="active">
+        <a href="#settings_printwatch_general" data-toggle="tab">General</a>
+      </li>
+      <li>
+        <a href="#settings_printwatch_detections" data-toggle="tab">Detection</a>
+      </li>
+      <li>
+        <a href="#settings_printwatch_actions" data-toggle="tab">Action</a>
+      </li>
+    </ul>
+  </div>
+  <div class="tab-content">
+    <div id="settings_printwatch_general" class="tab-pane active">
+      <table>
+        <tr>
+          <td>
+            <div class="control-group">
+              <label class="control-label">{{ _('API key') }}</label>
+              <div class="controls">
+                <input type="text" class="input-block-level" data-bind="value: settings.plugins.printwatch.api_key">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">{{ _('Snapshot URL') }}</label>
+              <div class="controls">
+                <input type="text" class="input-block-level" data-bind="value: settings.plugins.printwatch.stream_url">
+                <div class="help-block">{{ _("The webcam snapshot URL that will be used for detection. In most cases this will be the same as the Webcam URL used by OctoPrint in the 'Webcam & Timelapse' section.") }}</div>
+              </div>
+            </div>
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox" data-bind="checked: settings.plugins.printwatch.enable_feedback_images"> {{ _('Allow image sampling') }}
+                <div class="help-block">{{ _('By enabling this, you allow images sent to the server for AI detection to be used to enhance the detection model. Only questionable images are sampled to further train the model. For more information visit the printpal.io website.') }}</div>
+              </label>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="settings_printwatch_detections" class="tab-pane">
+      <table>
+        <tr>
+          <td>
+            <div class="detection_settings">
+              <div class="control-group">
+                <div class="control-group">
+                  <div class="controls">
+                    <label class="checkbox">
+                      <input type="checkbox" data-bind="checked: settings.plugins.printwatch.enable_detector"> {{ _('Enable PrintWatch failure detection') }}
+                    </label>
+                  </div>
+                </div>
+                <label class="control-label">{{ _('Detection Threshold') }}</label>
+                <div class="controls">
+                  <input type="range" min="0" max="100" class="slider" id="confidence" style='display:inline-block' data-bind="value: settings.plugins.printwatch.confidence" oninput="updateDisplay();">
+                  <label class="range" id="display" style='display:inline-block'></label>
+                  <div class="help-block">{{ _('The threshold at which a detection will be classified as a defect. By lowering this value the AI is more sensitive to defects. By increasing this value the AI will only classify defects when it is more certain.') }}</div>
+                </div>
+              </div>
+              <script>
+                function updateDisplay() {
+                  document.getElementById("display").innerText = document.getElementById("confidence").value;
+                }
+              </script>
+              <div class="control-group">
+                <label class="control-label">{{ _('Buffer Length') }}</label>
+                <div class="controls">
+                  <input type="range" min="8" max="128" class="slider" id="buffer_length" style='display:inline-block' data-bind="value: settings.plugins.printwatch.buffer_length" oninput="updateDisplayBuffer();">
+                  <label class="range" id="displayBuffer" style='display:inline-block'></label>
+                  <div class="help-block">{{ _('Number of previous detections to store in the buffer. Increasing this value will result in printwatch taking longer to take action. The default value of 16 will take approximately 3 minutes to trigger an action.') }}</div>
+                </div>
+              </div>
+              <script>
+                function updateDisplayBuffer() {
+                  document.getElementById("displayBuffer").innerText = document.getElementById("buffer_length").value;
+                }
+              </script>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="settings_printwatch_actions" class="tab-pane">
+      <table>
+        <tr>
+          <td>
+            <fieldset>
+              <legend>Thresholds</legend>
+              <div class="control-group">
+                <label class="control-label">{{ _('Notification Threshold') }}</label>
+                <div class="controls">
+                  <input type="range" min="0" max="100" class="slider" id="notification_threshold" style='display:inline-block' data-bind="value: settings.plugins.printwatch.notification_threshold" oninput="updateDisplayNotificationThreshold();">
+                  <label class="range" id="displayNotificationThreshold" style='display:inline-block'></label>
+                  <div class="help-block">{{ _('Threshold for a notification to be sent.') }}</div>
+                </div>
+              </div>
+              <script>
+                function updateDisplayNotificationThreshold() {
+                  let notification_thresh = document.getElementById("notification_threshold").value;
+                  document.getElementById("displayNotificationThreshold").innerText = notification_thresh;
+                  if (Number(notification_thresh) > Number(document.getElementById("action_threshold").value)) {
+                    document.getElementById("displayActionThreshold").innerText = notification_thresh;
+                    document.getElementById("action_threshold").value = notification_thresh;
+                  }
+                }
+              </script>
+              <div class="control-group">
+                <label class="control-label">{{ _('Action Threshold') }}</label>
+                <div class="controls">
+                  <input type="range" min="value: settings.plugins.printwatch.notification_threshold" max="100" class="slider" id="action_threshold" style='display:inline-block' data-bind="value: settings.plugins.printwatch.action_threshold" oninput="updateDisplayActionThreshold();">
+                  <label class="range" id="displayActionThreshold" style='display:inline-block'></label>
+                  <div class="help-block">{{ _('Threshold for an action to be taken.') }}</div>
+                </div>
+              </div>
+              <script>
+                function updateDisplayActionThreshold() {
+                  let action_thresh = document.getElementById("action_threshold").value;
+                  document.getElementById("displayActionThreshold").innerText = action_thresh;
+                  if (Number(action_thresh) < Number(document.getElementById("notification_threshold").value)) {
+                    document.getElementById("displayNotificationThreshold").innerText = action_thresh;
+                    document.getElementById("notification_threshold").value = action_thresh;
+                  }
+                }
+              </script>
+            </fieldset>
+            <fieldset>
+              <legend>Notifications</legend>
+              <div class="control-group">
+                <div class="controls">
+                  <label class="checkbox">
+                    <input type="checkbox" data-bind="checked: settings.plugins.printwatch.enable_email_notification"> {{ _('Email Notifications') }}
+                  </label>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">{{ _('Email Address') }}</label>
+                <div class="controls">
+                  <input type="text" class="input-block-level" data-bind="value: settings.plugins.printwatch.email_addr">
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Printer actions</legend>
+              <div class="help-block">{{ _('Actions OctoPrint will be requested to make on behalf of the printer once the Action Threshold is reached.') }}</div>
+              <div class="control-group" style='margin:0px'>
+                <div class="controls">
+                  <label class="checkbox">
+                    <input type="checkbox" onclick="updateCheckBoxes('checkbox-pause')" id="checkbox-pause" data-bind="checked: settings.plugins.printwatch.enable_shutoff"> {{ _('Pause Print') }}
+                  </label>
+                </div>
+              </div>
+              <div class="control-group" style='margin:0px;margin-left:5%;'>
+                <div class="controls">
+                  <label class="checkbox">
+                    <input type="checkbox" id="checkbox-extruder" data-bind="checked: settings.plugins.printwatch.enable_extruder_shutoff"> {{ _('Extruder heat OFF') }}
+                  </label>
+                </div>
+              </div>
+              <div class="control-group" style='margin:0px'>
+                <div class="controls">
+                  <label class="checkbox">
+                    <input type="checkbox" onclick="updateCheckBoxes('checkbox-stop')" id="checkbox-stop" data-bind="checked: settings.plugins.printwatch.enable_stop"> {{ _('Stop Print') }}
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</form>
+<li style="display:inline">
+  <a href="https://printpal.io/" target="_blank" rel="noreferrer noopener">
+    <i class="fas fa-home"></i> {{ _('Website') }}
+  </a>
+</li>
+<li style="display:inline">
+  <a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener">
+    <i class="fab fa-github-square"></i> {{ _('Github') }}
+  </a>
+</li>
+<li style="display:inline">
+  <a href="https://discord.gg/uu3zAGvS3f" target="_blank" rel="noreferrer noopener">
+    <i class="fab fa-discord"></i> {{ _('Discord') }}
+  </a>
+</li>
+<li style="display:inline">
+  <a href="https://printpal.io/documentation/" target="_blank" rel="noreferrer noopener">
+    <i class="fas fa-book"></i> {{ _('Documentation') }}
+  </a>
+</li>
+<li style="display:inline">
+  <a href="https://printpal.io/privacy/" target="_blank" rel="noreferrer noopener">
+    <i class="fas fa-balance-scale"></i> {{ _('Privacy Policy') }}
+  </a>
+</li>
