@@ -23,9 +23,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
         self.controller = PrinterControl(self)
-        self._logger.info("Settings: {}".format(self._settings.get([])))
-        self._logger.info("Settings @ api key: {}".format(self._settings.get(["api_key"])))
-        self._logger.info("Settings @ confidence: {}".format(self._settings.get(["confidence"])))
 
     def get_api_commands(self):
         return dict(
@@ -62,9 +59,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         if self.inferencer.warning_notification:
             self.inferencer.begin_cooldown()
         self._settings.save()
-        self._logger.info("Settings: {}".format(self._settings.get([])))
-        self._logger.info("Settings @ api key: {}".format(self._settings.get(["api_key"])))
-        self._logger.info("Settings @ confidence: {}".format(self._settings.get(["confidence"])))
         self._plugin_manager.send_plugin_message(self._identifier, dict(type="onSave"))
 
 
