@@ -2,16 +2,54 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
 <div id="top-container" class="tab-content">
   <h4>{{ _('PrintWatch detection preview') }}</h4>
-  <div id="reload" style="background-color:black;width:100%;aspect-ratio:19/9;text-align:center;color:white">
+  <div>
+    <div id="reload" style="background-color:black;width:100%;aspect-ratio:19/9;text-align:center;color:white">
       <img id="frame" alt="Stream starts 5 minutes into the print..." data-bind="attr:{src: contents}" />
+    </div>
   </div>
 </div>
 <div id="level-container" class="tab-content">
   <canvas id="livePlot" width="600" height="300"></canvas>
 </div>
+<div id="level-container" class="tab-content">
+  <span style="display:inline-block">
+    <label for="class_type">{{ _('Defect Type') }}</label>
+    <select id="class_type" data-test-id="class-types" style='margin-bottom:0px;'>
+      <option value="stringing">Stringing</option>
+      <option value="spaghetti">Spaghetti</option>
+      <option value="blobbing">Blobbing</option>
+      <option value="no-extrusion">No Extrusion</option>
+      <option value="under-extrusion">Under Extrusion</option>
+      <option value="over-extrusion">Over Extrusion</option>
+      <option value="warping">Warping</option>
+      <option value="layer-shift">Layer Shift</option>
+      <option value="other">Other</option>
+    </select>
+    <button class="btn btn-primary" data-bind="click: sendFeedback">{{ _('Send Feedback') }}</button>
+    <label for="btn btn-primary">
+      <small>{{ _('Is there a defect present in the webcam stream? Send feedback so the Machine Learning model will spot it next time.') }}</small>
+    </label>
+  </span>
+</div>
 <div style="margin-top:1%">
-    <li style="display:inline"><a href="https://printpal.io/" target="_blank" rel="noreferrer noopener"><i class="fas fa-home"></i> {{ _('Website') }}</a></li>
-    <li style="display:inline"><a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener"><i class="fab fa-github-square"></i> {{ _('Github') }}</a></li>
-    <li style="display:inline"><a href="https://discord.com/invite/yhkcZYmg" target="_blank" rel="noreferrer noopener"><i class="fab fa-discord"></i> {{ _('Discord') }}</a></li>
-    <li style="display:inline"><a href="https://printpal.io/documentation/" target="_blank" rel="noreferrer noopener"><i class="fas fa-book"></i> {{ _('Documentation') }}</a></li>
+  <li style="display:inline">
+    <a href="https://printpal.io/" target="_blank" rel="noreferrer noopener">
+      <i class="fas fa-home"></i> {{ _('Website') }}
+    </a>
+  </li>
+  <li style="display:inline">
+    <a href="https://github.com/printpal-io/OctoPrint-PrintWatch" target="_blank" rel="noreferrer noopener">
+      <i class="fab fa-github-square"></i> {{ _('Github') }}
+    </a>
+  </li>
+  <li style="display:inline">
+    <a href="https://discord.com/invite/yhkcZYmg" target="_blank" rel="noreferrer noopener">
+      <i class="fab fa-discord"></i> {{ _('Discord') }}
+    </a>
+  </li>
+  <li style="display:inline">
+    <a href="https://printpal.io/documentation/" target="_blank" rel="noreferrer noopener">
+      <i class="fas fa-book"></i> {{ _('Documentation') }}
+    </a>
+  </li>
 </div>

@@ -1,0 +1,11 @@
+div.main-container {
+  padding: 8px;
+}
+
+#settings_printwatch_actions legend {
+  margin-bottom: 0px;
+}
+
+form.form-horizontal {
+  padding-right:32px;
+}
