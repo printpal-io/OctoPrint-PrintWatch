@@ -29,6 +29,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'bad_responses' : 0,
                             'notification' : ''
                             }
+        self.response= None
 
 
     def _heartbeat(self):
@@ -36,8 +37,13 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             sleep(1.0) #prevent cpu overload
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 try:
-                    response = self._send('heartbeat')
-                    self._check_action(response)
+                    self.request_thread = Thread(target=self._send, args=('heartbeat',))
+                    self.request_thread.daemon = True
+                    self.request_thread.start()
+                    while self.response is None:
+                        sleep(0.1)
+                    self._check_action(self.response)
+                    self.response = None
                 except Exception as e:
                     self.plugin._logger.info(
                         "Error with Heartbeat: {}".format(str(e))
@@ -80,7 +86,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             headers={'User-Agent': 'Mozilla/5.0'}
         )
 
-        return loads(urlopen(inference_request, timeout=10).read())
+        self.response = loads(urlopen(inference_request, timeout=10).read())
 
     def _check_action(self, response):
         if response['actionType'] == 'pause':
@@ -124,7 +130,13 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def send_request(self):
         self.image = self.plugin.streamer.grab_frame()
         try:
-            response = self._send()
+            self.request_thread = Thread(target=self._send)
+            self.request_thread.daemon = True
+            self.request_thread.start()
+            while self.response is None:
+                sleep(0.1)
+            response = self.response
+            self.response = None
             self.parameters['last_t'] = time()
             if response['statusCode'] == 200:
                 self._appends(response)
@@ -193,7 +205,12 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             try:
                 self.parameters['notification'] = notification_level
                 self.parameters['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-                response = self._send('notify')
+                self.request_thread = Thread(target=self._send, args=('notify',))
+                self.request_thread.daemon = True
+                self.request_thread.start()
+                while self.response is None:
+                    sleep(0.1)
+                self.response = None
                 self.plugin._logger.info(
                     "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
                 )
