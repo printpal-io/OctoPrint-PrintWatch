@@ -29,7 +29,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'bad_responses' : 0,
                             'notification' : ''
                             }
-        self.response= None
 
 
     def _heartbeat(self):
@@ -37,13 +36,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             sleep(1.0) #prevent cpu overload
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 try:
-                    self.request_thread = Thread(target=self._send, args=('heartbeat',))
-                    self.request_thread.daemon = True
-                    self.request_thread.start()
-                    while self.response is None:
-                        sleep(0.1)
-                    self._check_action(self.response)
-                    self.response = None
+                    response = self._send('heartbeat')
+                    self._check_action(response)
                 except Exception as e:
                     self.plugin._logger.info(
                         "Error with Heartbeat: {}".format(str(e))
@@ -86,7 +80,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             headers={'User-Agent': 'Mozilla/5.0'}
         )
 
-        self.response = loads(urlopen(inference_request, timeout=10).read())
+        return loads(urlopen(inference_request, timeout=10).read())
 
     def _check_action(self, response):
         if response['actionType'] == 'pause':
@@ -130,13 +124,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def send_request(self):
         self.image = self.plugin.streamer.grab_frame()
         try:
-            self.request_thread = Thread(target=self._send)
-            self.request_thread.daemon = True
-            self.request_thread.start()
-            while self.response is None:
-                sleep(0.1)
-            response = self.response
-            self.response = None
+            response = self._send()
             self.parameters['last_t'] = time()
             if response['statusCode'] == 200:
                 self._appends(response)
@@ -163,7 +151,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
-                self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] <= 10 else 120.
+                self.plugin.inferencer.REQUEST_INTERVAL = 10.0
                 self.plugin._logger.info(
                     "Payload: {} {}".format(
                         self.plugin._settings.get([]),
@@ -179,7 +167,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 "Error retrieving server response: {}".format(str(e))
             )
             self.parameters['bad_responses'] += 1
-            self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] <= 10 else 120.
             self.plugin.inferencer.pred = False
             self.parameters['last_t'] = time()
 
@@ -206,12 +193,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             try:
                 self.parameters['notification'] = notification_level
                 self.parameters['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-                self.request_thread = Thread(target=self._send, args=('notify',))
-                self.request_thread.daemon = True
-                self.request_thread.start()
-                while self.response is None:
-                    sleep(0.1)
-                self.response = None
+                response = self._send('notify')
                 self.plugin._logger.info(
                     "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
                 )
