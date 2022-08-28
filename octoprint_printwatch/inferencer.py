@@ -79,9 +79,6 @@ class Inferencer():
                     self.plugin.comm_manager.send_request()
                     self._buffer_check()
 
-                if self.plugin.comm_manager.parameters['bad_responses'] >= int(self.plugin._settings.get(["buffer_length"])):
-                    self.plugin._logger.info("Too many bad response from server. Disabling PrintWatch monitoring")
-                    self.kill_service()
 
     def start_service(self):
         self.triggered = False
