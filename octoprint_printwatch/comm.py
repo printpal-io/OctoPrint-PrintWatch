@@ -1,4 +1,5 @@
 import octoprint.plugin
+import requests
 from urllib.request import Request, urlopen
 from socket import gethostbyname, gethostname
 from threading import Thread
@@ -74,7 +75,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def _send(self, endpoint='inference'):
         data = self._create_payload() if endpoint =='heartbeat' else self._create_payload(b64encode(self.image).decode('utf8'))
 
-        inference_request = Request(
+        inference_request = requests.get(
             '{}/{}/'.format(self.parameters['route'], endpoint),
             data=data,
             method='POST',
@@ -82,7 +83,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             timeout=self.timeout
         )
 
-        return loads(urlopen(inference_request, timeout=10).read())
+        return inference_request.json()
 
     def _check_action(self, response):
         if response['actionType'] == 'pause':
