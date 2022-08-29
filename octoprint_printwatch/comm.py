@@ -78,7 +78,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         inference_request = requests.get(
             '{}/{}/'.format(self.parameters['route'], endpoint),
             data=data,
-            method='POST',
             headers={'User-Agent': 'Mozilla/5.0'},
             timeout=self.timeout
         )
