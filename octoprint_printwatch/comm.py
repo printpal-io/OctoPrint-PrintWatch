@@ -1,5 +1,5 @@
 import octoprint.plugin
-from urllib.request import Request, urlopen
+import requests
 from socket import gethostbyname, gethostname
 from threading import Thread
 from time import time, sleep
@@ -20,6 +20,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
         self.plugin = plugin
         self.heartbeat_interval = 30.0
+        self.timeout = 10.0
         self.parameters = {
                             'ticket' : '',
                             'last_t' : 0.0,
@@ -73,14 +74,14 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def _send(self, endpoint='inference'):
         data = self._create_payload() if endpoint =='heartbeat' else self._create_payload(b64encode(self.image).decode('utf8'))
 
-        inference_request = Request(
+        inference_request = requests.get(
             '{}/{}/'.format(self.parameters['route'], endpoint),
             data=data,
-            method='POST',
-            headers={'User-Agent': 'Mozilla/5.0'}
+            headers={'User-Agent': 'Mozilla/5.0'},
+            timeout=self.timeout
         )
 
-        return loads(urlopen(inference_request, timeout=10).read())
+        return inference_request.json()
 
     def _check_action(self, response):
         if response['actionType'] == 'pause':
@@ -131,6 +132,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self._check_action(response)
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                self.timeout = 10.0
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
                 self.plugin._plugin_manager.send_plugin_message(
                     self.plugin._identifier,
@@ -151,7 +153,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             else:
                 self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
-                self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
                 self.plugin._logger.info(
                     "Payload: {} {}".format(
                         self.plugin._settings.get([]),
@@ -167,6 +169,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 "Error retrieving server response: {}".format(str(e))
             )
             self.parameters['bad_responses'] += 1
+            self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
+            self.timeout = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 4 else 30.
             self.plugin.inferencer.pred = False
             self.parameters['last_t'] = time()
 
