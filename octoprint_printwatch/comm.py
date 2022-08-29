@@ -1,6 +1,5 @@
 import octoprint.plugin
 import requests
-from urllib.request import Request, urlopen
 from socket import gethostbyname, gethostname
 from threading import Thread
 from time import time, sleep
