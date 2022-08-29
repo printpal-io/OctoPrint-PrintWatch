@@ -20,6 +20,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
         self.plugin = plugin
         self.heartbeat_interval = 30.0
+        self.timeout = 10.0
         self.parameters = {
                             'ticket' : '',
                             'last_t' : 0.0,
@@ -77,7 +78,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             '{}/{}/'.format(self.parameters['route'], endpoint),
             data=data,
             method='POST',
-            headers={'User-Agent': 'Mozilla/5.0'}
+            headers={'User-Agent': 'Mozilla/5.0'},
+            timeout=self.timeout
         )
 
         return loads(urlopen(inference_request, timeout=10).read())
@@ -131,6 +133,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self._check_action(response)
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                self.timeout = 10.0
                 boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
                 self.plugin._plugin_manager.send_plugin_message(
                     self.plugin._identifier,
@@ -168,6 +171,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             )
             self.parameters['bad_responses'] += 1
             self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
+            self.timeout = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 4 else 30.
             self.plugin.inferencer.pred = False
             self.parameters['last_t'] = time()
 
