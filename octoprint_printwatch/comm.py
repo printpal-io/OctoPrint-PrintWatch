@@ -78,7 +78,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             '{}/{}/'.format(self.parameters['route'], endpoint),
             data=data,
             headers={'User-Agent': 'Mozilla/5.0'},
-            timeout=self.timeout
+            timeout=self.timeout if endpoint is not 'notify' else 30.0
         )
 
         return inference_request.json()
