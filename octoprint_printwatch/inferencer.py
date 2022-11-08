@@ -1,5 +1,7 @@
+import asyncio
 from threading import Thread
 from time import time, sleep
+from contextlib import suppress
 
 MIN_MULTIPLIER = 0.5
 MAX_MULTIPLIER = 4
@@ -18,9 +20,12 @@ class Inferencer():
         self.action_level = []
         self.cooldown_time = 0.0
         self.smas = []
+        self.aio = None
+
 
     def _buffer_check(self):
         buffer_length = int(self.plugin._settings.get(["buffer_length"]))
+        self.plugin._logger.info('SMAS: {}'.format(self.smas))
         if len(self.smas) > 0:
             self.plugin._plugin_manager.send_plugin_message(
                 self.plugin._identifier,
@@ -30,6 +35,7 @@ class Inferencer():
                     pop=len(self.scores) > int(buffer_length * MAX_MULTIPLIER)
                 )
             )
+            self.plugin._logger.info('Plugin message SENT! LEN: {}'.format(len(self.smas)))
         while len(self.circular_buffer) > buffer_length:
             self.circular_buffer.pop(0)
         while len(self.scores) > int(buffer_length * MAX_MULTIPLIER):
@@ -76,8 +82,7 @@ class Inferencer():
             sleep(0.1) #prevent cpu overload
             if self.plugin._printer.is_printing() and not self.triggered:
                 if time() - self.plugin.comm_manager.parameters['last_t'] > self.REQUEST_INTERVAL:
-                    self.plugin.comm_manager.send_request()
-                    self._buffer_check()
+                    self.aio.run_until_complete(self.plugin.comm_manager.send_request())
 
 
     def start_service(self):
@@ -90,6 +95,8 @@ class Inferencer():
                 self.inference_loop = Thread(target=self._inferencing)
                 self.inference_loop.daemon = True
                 self.inference_loop.start()
+                self.aio = asyncio.new_event_loop()
+                asyncio.set_event_loop(self.aio)
                 self.plugin._logger.info("PrintWatch inference service started")
                 self.plugin._plugin_manager.send_plugin_message(
                     self.plugin._identifier,
@@ -99,7 +106,10 @@ class Inferencer():
                     )
                 )
 
+
+
     def kill_service(self):
+        self.plugin._logger.info('Just shut down aio')
         self.run_thread = False
         self.inference_loop = None
         self.REQUEST_INTERVAL = 10.0
@@ -107,6 +117,7 @@ class Inferencer():
         self.circular_buffer = []
         self.action_level = []
         self.scores = []
+        self.smas = []
         self.current_percent = 0.0
         self.plugin._logger.info("PrintWatch inference service terminated")
         self.plugin._plugin_manager.send_plugin_message(
@@ -123,7 +134,8 @@ class Inferencer():
             self.notification_event('action')
 
     def notification_event(self, notification_level):
-        self.plugin.comm_manager.email_notification(notification_level)
+        asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
+        #self.aio.run_until_complete(self.plugin.comm_manager.email_notification(notification_level))
 
     def begin_cooldown(self):
         self.cooldown_time = time()

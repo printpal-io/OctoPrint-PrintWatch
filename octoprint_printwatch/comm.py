@@ -1,10 +1,9 @@
 import octoprint.plugin
-import requests
-from socket import gethostbyname, gethostname
-from threading import Thread
 from time import time, sleep
 from datetime import datetime
-from threading import Lock
+from threading import Thread
+import asyncio
+import aiohttp
 from json import loads, dumps
 from base64 import b64encode
 from uuid import uuid4
@@ -14,31 +13,62 @@ from PIL import ImageDraw
 import re
 
 
-DEFAULT_ROUTE = 'https://printwatch-printpal.pythonanywhere.com'
+DEFAULT_ROUTE = 'http://139.144.26.196:8888'
+
+PRINTING_STATES = [
+                    'printing',
+                    'finishing',
+                    'printing from sd',
+                    'sending file to sd'
+                    ]
+
+PAUSED_STATES = [
+                'paused',
+                'pausing',
+                'resuming'
+                ]
+ONLINE_STATES = [
+                'connecting',
+                'operational',
+                'closed',
+                'transferring_file',
+                'starting print from sd',
+                'starting to send file to sd',
+                'connecting',
+                'opening serial connection',
+                'detecting serial connection',
+                'connecting',
+                'starting',
+                'cancelling'
+                ]
 
 class CommManager(octoprint.plugin.SettingsPlugin):
     def __init__(self, plugin):
         self.plugin = plugin
         self.heartbeat_interval = 30.0
         self.timeout = 10.0
+        self.response = None
+        self.aio = None
         self.parameters = {
                             'ticket' : '',
                             'last_t' : 0.0,
-                            'ip' : gethostbyname(gethostname()),
                             'route' : DEFAULT_ROUTE,
                             'id' : self.plugin._settings.global_get(["accessControl", "salt"]) if self.plugin._settings.global_get(["accessControl", "salt"]) is not None else uuid4().hex,
                             'bad_responses' : 0,
                             'notification' : ''
                             }
+        self.start_service()
 
 
     def _heartbeat(self):
+        init = True
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
-            sleep(1.0) #prevent cpu overload
+            sleep(1.0)
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 try:
-                    response = self._send('heartbeat')
-                    self._check_action(response)
+                    self.aio.run_until_complete(self._send('api/v2/heartbeat', include_settings=init))
+                    self._check_action(self.response)
+                    init = False
                 except Exception as e:
                     self.plugin._logger.info(
                         "Error with Heartbeat: {}".format(str(e))
@@ -49,51 +79,90 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
 
-    def _create_payload(self, image=None):
-        return dumps({
-                    'image_array' : image,
-                    'settings' : {
-                        'email_addr' : self.plugin._settings.get(["email_addr"]),
-                        'notification_threshold' : self.plugin._settings.get(["notification_threshold"]),
-                        'action_threshold' : self.plugin._settings.get(["action_threshold"]),
-                        'confidence' : self.plugin._settings.get(["confidence"]),
-                        'buffer_length' : self.plugin._settings.get(["buffer_length"]),
-                        'buffer_percent' : self.plugin._settings.get(["buffer_percent"]),
-                        'api_key' : self.plugin._settings.get(["api_key"]),
-                        'enable_feedback_images' : self.plugin._settings.get(["enable_feedback_images"])
-                    },
-                    'parameters' : self.parameters,
-                    'job' : self.plugin._printer.get_current_job(),
-                    'data' : self.plugin._printer.get_current_data(),
-                    'state' : self.plugin._printer.get_state_id(),
-                    'version' : self.plugin._plugin_version,
-                    'scores' : self.plugin.inferencer.scores
-                }).encode('utf8')
+    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False):
+        if force_state > 0:
+            state = force_state
+        else:
+            s = self.plugin._printer.get_state_string()
+            self.plugin._logger.info('STATE: {}'.format(s))
+            if s.lower() in PRINTING_STATES:
+                state = 0
+            elif s.lower() in PAUSED_STATES:
+                state = 1
+            elif s.lower() in ONLINE_STATES:
+                state = 2
+            else:
+                state = 500
+        self.plugin._logger.info('State chosen: {}'.format(state))
+        r = {
+            'api_key' : self.plugin._settings.get(["api_key"]),
+            'printer_id' : self.parameters.get('id'),
+            'state' : state,
+            'version' : self.plugin._plugin_version
+        }
+        if image is not None:
+            r['image_array'] = image
+            r['conf'] = int(self.plugin._settings.get(["confidence"]))/100.0
+            r['buffer_length'] = int(self.plugin._settings.get(["buffer_length"]))
+            r['buffer_percent'] = int(self.plugin._settings.get(["buffer_percent"]))
+            r['thresholds'] = [int(self.plugin._settings.get(["notification_threshold"]))/100.0, int(self.plugin._settings.get(["action_threshold"]))/100.0]
+            r['scores'] = self.plugin.inferencer.scores
+            r['printTime'] = 500
+
+        if include_settings:
+            r['settings'] = {
+                'detection_threshold' : int(self.plugin._settings.get(["confidence"])),
+                'buffer_length' : int(self.plugin._settings.get(["buffer_length"])),
+                'notification_threshold' : int(self.plugin._settings.get(["notification_threshold"])),
+                'action_threshold' : int(self.plugin._settings.get(["action_threshold"])),
+                'enable_notification' : self.plugin._settings.get(["enable_email_notification"]),
+                'email_address' : self.plugin._settings.get(["email_addr"]),
+                'pause_print' : self.plugin._settings.get(["enable_shutoff"]),
+                'cancel_print' : self.plugin._settings.get(["enable_stop"]),
+                'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"])
+            }
+        return r
 
 
-    def _send(self, endpoint='inference'):
-        data = self._create_payload() if endpoint =='heartbeat' else self._create_payload(b64encode(self.image).decode('utf8'))
-
-        inference_request = requests.get(
-            '{}/{}/'.format(self.parameters['route'], endpoint),
-            data=data,
-            headers={'User-Agent': 'Mozilla/5.0'},
-            timeout=self.timeout if endpoint is not 'notify' else 30.0
-        )
-
-        return inference_request.json()
+    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False):
+        data = self._create_payload(force_state=force_state, include_settings=include_settings) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                            '{}/{}'.format(self.parameters['route'], endpoint),
+                            json = data,
+                            headers={'User-Agent': 'Mozilla/5.0'},
+                            timeout=aiohttp.ClientTimeout(total=self.timeout if endpoint is not 'api/v2/notify' else 30.0)
+                        ) as response:
+                        r = await response.json()
+        self.plugin._logger.info('got send response: {}'.format(r))
+        self.response = r
+        return r
 
     def _check_action(self, response):
-        if response['actionType'] == 'pause':
+        action = response.get('action')
+        if action == 'pause':
             while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or self.plugin._printer.is_paused()):
                 self.plugin._printer.pause_print()
-        elif response['actionType'] == 'stop':
+        elif action == 'cancel':
             while not (self.plugin._printer.is_cancelling() and self.plugin._printer.is_printing()):
                 self.plugin._printer.cancel_print()
-        elif response['actionType'] == 'resume':
+        elif action == 'resume':
             if self.plugin._printer.is_paused():
                 while not self.plugin._printer.is_printing():
                     self.plugin._printer.resume_print()
+
+        if response.get('settings') not in [None, False]:
+            self.plugin._settings.set(['confidence'], response.get('settings').get('detection_threshold'), self.plugin._settings.get(['confidence']))
+            self.plugin._settings.set(['buffer_length'], response.get('settings').get('buffer_length'), self.plugin._settings.get(['buffer_length']))
+            self.plugin._settings.set(['notification_threshold'], response.get('settings').get('notification_threshold'), self.plugin._settings.get(['notification_threshold']))
+            self.plugin._settings.set(['action_threshold'], response.get('settings').get('action_threshold'), self.plugin._settings.get(['action_threshold']))
+            self.plugin._settings.set(['enable_email_notification'], response.get('settings').get('enable_notification'), self.plugin._settings.get(['enable_email_notification']))
+            self.plugin._settings.set(['email_addr'], response.get('settings').get('email_address'), self.plugin._settings.get(['email_addr']))
+            self.plugin._settings.set(['enable_shutoff'], response.get('settings').get('pause_print'), self.plugin._settings.get(['enable_shutoff']))
+            self.plugin._settings.set(['enable_stop'], response.get('settings').get('cancel_print'), self.plugin._settings.get(['enable_stop']))
+            self.plugin._settings.set(['enable_extruder_shutoff'], response.get('settings').get('extruder_heat_off'), self.plugin._settings.get(['enable_extruder_shutoff']))
+            self.plugin._settings.save(force=True, trigger_event=True)
+            #self.plugin._settings.load(migrate=True)
 
     def _create_ticket(self):
         ticket = uuid4().hex
@@ -115,17 +184,22 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.heartbeat_loop = Thread(target=self._heartbeat)
                 self.heartbeat_loop.daemon = True
                 self.heartbeat_loop.start()
+                self.aio = asyncio.new_event_loop()
+                asyncio.set_event_loop(self.aio)
                 self.plugin._logger.info("PrintWatch heartbeat service started")
+
 
     def kill_service(self):
         self.heartbeat = False
         self.heartbeat_loop = None
         self.plugin._logger.info("PrintWatch heartbeat service terminated")
 
-    def send_request(self):
+    async def send_request(self):
         self.image = self.plugin.streamer.grab_frame()
         try:
-            response = self._send()
+            self.plugin._logger.info('Beginning send await')
+            response = await self._send()
+            self.plugin._logger.info('Inference request reponse: {}'.format(response))
             self.parameters['last_t'] = time()
             if response['statusCode'] == 200:
                 self._appends(response)
@@ -133,7 +207,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.parameters['bad_responses'] = 0
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0
                 self.timeout = 10.0
-                boxes = eval(re.sub('\s+', ',', re.sub('\s+\]', ']', re.sub('\[\s+', '[', response['boxes'].replace('\n','')))))
+                boxes = response['boxes']
                 self.plugin._plugin_manager.send_plugin_message(
                     self.plugin._identifier,
                     dict(
@@ -148,6 +222,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                         icon='plugin/printwatch/static/img/printwatch-green.gif'
                     )
                 )
+                self.plugin.inferencer._buffer_check()
             elif response['statusCode'] == 213:
                 self.plugin.inferencer.REQUEST_INTERVAL= 300.0
             else:
@@ -192,12 +267,12 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         contents = b64encode(out_img.getvalue()).decode('utf8')
         return 'data:image/png;charset=utf-8;base64,' + contents.split('\n')[0]
 
-    def email_notification(self, notification_level):
+    async def email_notification(self, notification_level):
         if self.plugin._settings.get(["enable_email_notification"]):
             try:
                 self.parameters['notification'] = notification_level
                 self.parameters['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-                response = self._send('notify')
+                response = await self._send('api/v2/notify')
                 self.plugin._logger.info(
                     "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
                 )
@@ -206,7 +281,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     "Error retrieving server response for email notification: {}".format(str(e))
                 )
 
-    def send_feedback(self, classification):
+    async def send_feedback(self, classification):
         self.parameters['feedback'] = {
             'feedback' : True,
             'time' : time(),
@@ -214,7 +289,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         }
         try:
             self.image = self.plugin.streamer.grab_frame()
-            response = self._send('feedback')
+            response = await self._send('feedback')
             self.plugin._logger.info(
                 "Feedback sent for defect identified as: {}".format(classification)
             )
