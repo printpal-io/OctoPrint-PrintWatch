@@ -101,13 +101,19 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             'version' : self.plugin._plugin_version
         }
         if image is not None:
+            print_job_info = self.plugin._printer.get_current_data()
+            self.plugin._logger.info('PERCENT: {}'.format(print_job_info.get('progress').get('completion')))
             r['image_array'] = image
             r['conf'] = int(self.plugin._settings.get(["confidence"]))/100.0
             r['buffer_length'] = int(self.plugin._settings.get(["buffer_length"]))
             r['buffer_percent'] = int(self.plugin._settings.get(["buffer_percent"]))
             r['thresholds'] = [int(self.plugin._settings.get(["notification_threshold"]))/100.0, int(self.plugin._settings.get(["action_threshold"]))/100.0]
             r['scores'] = self.plugin.inferencer.scores
-            r['printTime'] = 500
+            r['printTime'] = print_job_info.get('progress').get('printTime')
+            r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft')
+            r['progress'] = print_job_info.get('progress').get('completion')
+            r['job_name'] = self.plugin._printer.get_current_job().get('file').get('name')
+            r['sma_spaghetti'] = self.plugin.inferencer.smas[-1][0] if len(self.plugin.inferencer.smas) > 0 else 0.
 
         if include_settings:
             r['settings'] = {
@@ -126,6 +132,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False):
         data = self._create_payload(force_state=force_state, include_settings=include_settings) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings)
+
         async with aiohttp.ClientSession() as session:
             async with session.post(
                             '{}/{}'.format(self.parameters['route'], endpoint),
@@ -134,7 +141,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             timeout=aiohttp.ClientTimeout(total=self.timeout if endpoint is not 'api/v2/notify' else 30.0)
                         ) as response:
                         r = await response.json()
-        self.plugin._logger.info('got send response: {}'.format(r))
+        #self.plugin._logger.info('got send response: {}'.format(r))
         self.response = r
         return r
 
@@ -196,58 +203,59 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     async def send_request(self):
         self.image = self.plugin.streamer.grab_frame()
-        try:
-            self.plugin._logger.info('Beginning send await')
-            response = await self._send()
-            self.plugin._logger.info('Inference request reponse: {}'.format(response))
-            self.parameters['last_t'] = time()
-            if response['statusCode'] == 200:
-                self._appends(response)
-                self._check_action(response)
-                self.parameters['bad_responses'] = 0
-                self.plugin.inferencer.REQUEST_INTERVAL = 10.0
-                self.timeout = 10.0
-                boxes = response['boxes']
-                self.plugin._plugin_manager.send_plugin_message(
-                    self.plugin._identifier,
-                    dict(
-                        type="display_frame",
-                        image=self.draw_boxes(boxes)
+        if not isinstance(self.image, bool):
+            try:
+                self.plugin._logger.info('Beginning send await')
+                response = await self._send()
+                self.plugin._logger.info('Inference request reponse: {}'.format(response))
+                self.parameters['last_t'] = time()
+                if response['statusCode'] == 200:
+                    self._appends(response)
+                    self._check_action(response)
+                    self.parameters['bad_responses'] = 0
+                    self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                    self.timeout = 10.0
+                    boxes = response['boxes']
+                    self.plugin._plugin_manager.send_plugin_message(
+                        self.plugin._identifier,
+                        dict(
+                            type="display_frame",
+                            image=self.draw_boxes(boxes)
+                        )
                     )
-                )
-                self.plugin._plugin_manager.send_plugin_message(
-                    self.plugin._identifier,
-                    dict(
-                        type="icon",
-                        icon='plugin/printwatch/static/img/printwatch-green.gif'
+                    self.plugin._plugin_manager.send_plugin_message(
+                        self.plugin._identifier,
+                        dict(
+                            type="icon",
+                            icon='plugin/printwatch/static/img/printwatch-green.gif'
+                        )
                     )
+                    self.plugin.inferencer._buffer_check()
+                elif response['statusCode'] == 213:
+                    self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                else:
+                    self.plugin.inferencer.pred = False
+                    self.parameters['bad_responses'] += 1
+                    self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
+                    self.plugin._logger.info(
+                        "Payload: {} {}".format(
+                            self.plugin._settings.get([]),
+                            self.parameters
+                        )
+                    )
+                    self.plugin._logger.info(
+                        "Response: {}".format(response)
+                    )
+
+            except Exception as e:
+                self.plugin._logger.info(
+                    "Error retrieving server response: {}".format(str(e))
                 )
-                self.plugin.inferencer._buffer_check()
-            elif response['statusCode'] == 213:
-                self.plugin.inferencer.REQUEST_INTERVAL= 300.0
-            else:
-                self.plugin.inferencer.pred = False
                 self.parameters['bad_responses'] += 1
                 self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
-                self.plugin._logger.info(
-                    "Payload: {} {}".format(
-                        self.plugin._settings.get([]),
-                        self.parameters
-                    )
-                )
-                self.plugin._logger.info(
-                    "Response: {}".format(response)
-                )
-
-        except Exception as e:
-            self.plugin._logger.info(
-                "Error retrieving server response: {}".format(str(e))
-            )
-            self.parameters['bad_responses'] += 1
-            self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
-            self.timeout = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 4 else 30.
-            self.plugin.inferencer.pred = False
-            self.parameters['last_t'] = time()
+                self.timeout = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 4 else 30.
+                self.plugin.inferencer.pred = False
+                self.parameters['last_t'] = time()
 
     def draw_boxes(self, boxes):
         pil_img = Image.open(io.BytesIO(self.image))
@@ -256,10 +264,10 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
         for i, det in enumerate(boxes):
             det = [j / 640 for j in det]
-            x1 = (det[0] - (det[2]/2))*width
-            y1 = (det[1] - (det[3]/2))* height
-            x2 = (det[0] + (det[2]/2))*width
-            y2 = (det[1] + (det[3]/2))*height
+            x1 = det[0] * width
+            y1 = det[1] * height
+            x2 = det[2] * width
+            y2 = det[3] * height
             process_image.rectangle([(x1, y1), (x2, y2)], fill=None, outline="red", width=4)
 
         out_img = io.BytesIO()
