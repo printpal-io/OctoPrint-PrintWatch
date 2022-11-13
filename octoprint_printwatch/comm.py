@@ -127,6 +127,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 'cancel_print' : self.plugin._settings.get(["enable_stop"]),
                 'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"])
             }
+        self.plugin._logger.info('PAYLKOAD: {}'.format(r))
         return r
 
 
