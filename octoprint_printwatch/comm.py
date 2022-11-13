@@ -141,7 +141,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             timeout=aiohttp.ClientTimeout(total=self.timeout if endpoint is not 'api/v2/notify' else 30.0)
                         ) as response:
                         r = await response.json()
-        #self.plugin._logger.info('got send response: {}'.format(r))
+        self.plugin._logger.info('got send response: {}'.format(r))
         self.response = r
         return r
 
