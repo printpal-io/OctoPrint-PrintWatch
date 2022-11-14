@@ -15,5 +15,5 @@ class VideoStreamer():
                         return snap_preview.read()
             self.plugin._logger.info("Issue with the stream url input.")
             return False
-        except:
-            return False
+        except Exception as e:
+            return str(e)

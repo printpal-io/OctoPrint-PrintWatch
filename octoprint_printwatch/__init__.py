@@ -25,20 +25,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.controller = PrinterControl(self)
 
 
-    def get_api_commands(self):
-        return dict(
-            sendFeedback=[]
-        )
-
-    def on_api_command(self, command, data):
-        if command == 'sendFeedback':
-            self.comm_manager.send_feedback(data.get("class"))
-            self._logger.info(
-                "Defect report sending to server for type: {}".format(data.get("class"))
-            )
-            return
-        return
-
     def get_update_information(self):
         return dict(
             printwatch=dict(
@@ -80,7 +66,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             buffer_length = 16,
             buffer_percent = 80,
             enable_feedback_images = True,
-            api_key = ''
+            api_key = '',
+            printer_id = None
             )
 
     def get_template_configs(self):

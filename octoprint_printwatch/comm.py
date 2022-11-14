@@ -4,13 +4,11 @@ from datetime import datetime
 from threading import Thread
 import asyncio
 import aiohttp
-from json import loads, dumps
 from base64 import b64encode
 from uuid import uuid4
-import io
+from io import BytesIO
 import PIL.Image as Image
 from PIL import ImageDraw
-import re
 
 
 DEFAULT_ROUTE = 'http://139.144.26.196:8888'
@@ -49,11 +47,12 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         self.timeout = 10.0
         self.response = None
         self.aio = None
+        if self.plugin._settings.get(["printer_id"]) is None:
+            self.plugin._settings.set(['printer_id'], uuid4().hex)
         self.parameters = {
                             'ticket' : '',
                             'last_t' : 0.0,
                             'route' : DEFAULT_ROUTE,
-                            'id' : self.plugin._settings.global_get(["accessControl", "salt"]) if self.plugin._settings.global_get(["accessControl", "salt"]) is not None else uuid4().hex,
                             'bad_responses' : 0,
                             'notification' : ''
                             }
@@ -84,7 +83,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             state = force_state
         else:
             s = self.plugin._printer.get_state_string()
-            self.plugin._logger.info('STATE: {}'.format(s))
             if s.lower() in PRINTING_STATES:
                 state = 0
             elif s.lower() in PAUSED_STATES:
@@ -93,16 +91,16 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 state = 2
             else:
                 state = 500
-        self.plugin._logger.info('State chosen: {}'.format(state))
+
         r = {
             'api_key' : self.plugin._settings.get(["api_key"]),
-            'printer_id' : self.parameters.get('id'),
+            'printer_id' : self.plugin._settings.get(["printer_id"]),
             'state' : state,
             'version' : self.plugin._plugin_version
         }
+
         if image is not None:
             print_job_info = self.plugin._printer.get_current_data()
-            self.plugin._logger.info('PERCENT: {}'.format(print_job_info.get('progress').get('completion')))
             r['image_array'] = image
             r['conf'] = int(self.plugin._settings.get(["confidence"]))/100.0
             r['buffer_length'] = int(self.plugin._settings.get(["buffer_length"]))
@@ -114,6 +112,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             r['progress'] = print_job_info.get('progress').get('completion')
             r['job_name'] = self.plugin._printer.get_current_job().get('file').get('name')
             r['sma_spaghetti'] = self.plugin.inferencer.smas[-1][0] if len(self.plugin.inferencer.smas) > 0 else 0.
+            r['enable_feedback_images'] = self.plugin._settings.get(['enable_feedback_images'])
 
         if include_settings:
             r['settings'] = {
@@ -125,9 +124,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 'email_address' : self.plugin._settings.get(["email_addr"]),
                 'pause_print' : self.plugin._settings.get(["enable_shutoff"]),
                 'cancel_print' : self.plugin._settings.get(["enable_stop"]),
-                'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"])
+                'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"]),
+                'enable_feedback_images' : self.plugin._settings.get(['enable_feedback_images'])
             }
-        self.plugin._logger.info('PAYLKOAD: {}'.format(r))
         return r
 
 
@@ -169,8 +168,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             self.plugin._settings.set(['enable_shutoff'], response.get('settings').get('pause_print'), self.plugin._settings.get(['enable_shutoff']))
             self.plugin._settings.set(['enable_stop'], response.get('settings').get('cancel_print'), self.plugin._settings.get(['enable_stop']))
             self.plugin._settings.set(['enable_extruder_shutoff'], response.get('settings').get('extruder_heat_off'), self.plugin._settings.get(['enable_extruder_shutoff']))
+            self.plugin._settings.set(['enable_feedback_images'], response.get('settings').get('enable_feedback_images') , self.plugin._settings.get(['enable_feedback_images']))
             self.plugin._settings.save(force=True, trigger_event=True)
-            #self.plugin._settings.load(migrate=True)
 
     def _create_ticket(self):
         ticket = uuid4().hex
@@ -204,6 +203,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     async def send_request(self):
         self.image = self.plugin.streamer.grab_frame()
+        self.plugin._logger.info('trying send_request')
         if not isinstance(self.image, bool):
             try:
                 self.plugin._logger.info('Beginning send await')
@@ -257,9 +257,11 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.timeout = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 4 else 30.
                 self.plugin.inferencer.pred = False
                 self.parameters['last_t'] = time()
+        else:
+            self.plugin._logger.info('Issue acquiring the snapshot frame from the URL provided in the settings. - {}'.format(self.image))
 
     def draw_boxes(self, boxes):
-        pil_img = Image.open(io.BytesIO(self.image))
+        pil_img = Image.open(BytesIO(self.image))
         process_image = ImageDraw.Draw(pil_img)
         width, height = pil_img.size
 
@@ -271,7 +273,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             y2 = det[3] * height
             process_image.rectangle([(x1, y1), (x2, y2)], fill=None, outline="red", width=4)
 
-        out_img = io.BytesIO()
+        out_img = BytesIO()
         pil_img.save(out_img, format='PNG')
         contents = b64encode(out_img.getvalue()).decode('utf8')
         return 'data:image/png;charset=utf-8;base64,' + contents.split('\n')[0]
@@ -289,24 +291,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin._logger.info(
                     "Error retrieving server response for email notification: {}".format(str(e))
                 )
-
-    async def send_feedback(self, classification):
-        self.parameters['feedback'] = {
-            'feedback' : True,
-            'time' : time(),
-            'class' : classification
-        }
-        try:
-            self.image = self.plugin.streamer.grab_frame()
-            response = await self._send('feedback')
-            self.plugin._logger.info(
-                "Feedback sent for defect identified as: {}".format(classification)
-            )
-        except Exception as e:
-            self.plugin._logger.info(
-                "Error retrieving server response for feedback sending: {}".format(str(e))
-            )
-        return
 
 
 

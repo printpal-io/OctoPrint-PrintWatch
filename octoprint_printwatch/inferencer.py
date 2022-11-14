@@ -1,7 +1,6 @@
 import asyncio
 from threading import Thread
 from time import time, sleep
-from contextlib import suppress
 
 MIN_MULTIPLIER = 0.5
 MAX_MULTIPLIER = 4
@@ -25,7 +24,6 @@ class Inferencer():
 
     def _buffer_check(self):
         buffer_length = int(self.plugin._settings.get(["buffer_length"]))
-        self.plugin._logger.info('SMAS: {}'.format(self.smas))
         if len(self.smas) > 0:
             self.plugin._plugin_manager.send_plugin_message(
                 self.plugin._identifier,
@@ -35,7 +33,6 @@ class Inferencer():
                     pop=len(self.scores) > int(buffer_length * MAX_MULTIPLIER)
                 )
             )
-            self.plugin._logger.info('Plugin message SENT! LEN: {}'.format(len(self.smas)))
         while len(self.circular_buffer) > buffer_length:
             self.circular_buffer.pop(0)
         while len(self.scores) > int(buffer_length * MAX_MULTIPLIER):
