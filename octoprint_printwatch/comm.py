@@ -66,8 +66,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 try:
                     self.aio.run_until_complete(self._send('api/v2/heartbeat', include_settings=init))
-                    self._check_action(self.response)
-                    init = False
+                    if not isinstance(self.response, bool):
+                        self._check_action(self.response)
+                        init = False
                 except Exception as e:
                     self.plugin._logger.info(
                         "Error with Heartbeat: {}".format(str(e))
@@ -132,19 +133,23 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
     async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False):
-        data = self._create_payload(force_state=force_state, include_settings=include_settings) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings)
+        if self.plugin._seetings.get(['api_key']) not in ['', None] and  self.plugin._seetings.get(['printer_id']) not in ['', None]:
+            data = self._create_payload(force_state=force_state, include_settings=include_settings) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings)
 
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                            '{}/{}'.format(self.parameters['route'], endpoint),
-                            json = data,
-                            headers={'User-Agent': 'Mozilla/5.0'},
-                            timeout=aiohttp.ClientTimeout(total=self.timeout if endpoint is not 'api/v2/notify' else 30.0)
-                        ) as response:
-                        r = await response.json()
-        self.plugin._logger.info('got send response: {}'.format(r))
-        self.response = r
-        return r
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                                '{}/{}'.format(self.parameters['route'], endpoint),
+                                json = data,
+                                headers={'User-Agent': 'Mozilla/5.0'},
+                                timeout=aiohttp.ClientTimeout(total=self.timeout if endpoint is not 'api/v2/notify' else 30.0)
+                            ) as response:
+                            r = await response.json()
+            self.plugin._logger.info('got send response: {}'.format(r))
+            self.response = r
+            return r
+        else:
+            self.reponse = False
+            return False
 
     def _check_action(self, response):
         action = response.get('action')
@@ -210,43 +215,48 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin._logger.info('Beginning send await')
                 response = await self._send()
                 self.plugin._logger.info('Inference request reponse: {}'.format(response))
-                self.parameters['last_t'] = time()
-                if response['statusCode'] == 200:
-                    self._appends(response)
-                    self._check_action(response)
-                    self.parameters['bad_responses'] = 0
-                    self.plugin.inferencer.REQUEST_INTERVAL = 10.0
-                    self.timeout = 10.0
-                    boxes = response['boxes']
-                    self.plugin._plugin_manager.send_plugin_message(
-                        self.plugin._identifier,
-                        dict(
-                            type="display_frame",
-                            image=self.draw_boxes(boxes)
+                if not isinstance(response, bool):
+                    self.parameters['last_t'] = time()
+                    if response['statusCode'] == 200:
+                        self._appends(response)
+                        self._check_action(response)
+                        self.parameters['bad_responses'] = 0
+                        self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                        self.timeout = 10.0
+                        boxes = response['boxes']
+                        self.plugin._plugin_manager.send_plugin_message(
+                            self.plugin._identifier,
+                            dict(
+                                type="display_frame",
+                                image=self.draw_boxes(boxes)
+                            )
                         )
-                    )
-                    self.plugin._plugin_manager.send_plugin_message(
-                        self.plugin._identifier,
-                        dict(
-                            type="icon",
-                            icon='plugin/printwatch/static/img/printwatch-green.gif'
+                        self.plugin._plugin_manager.send_plugin_message(
+                            self.plugin._identifier,
+                            dict(
+                                type="icon",
+                                icon='plugin/printwatch/static/img/printwatch-green.gif'
+                            )
                         )
-                    )
-                    self.plugin.inferencer._buffer_check()
-                elif response['statusCode'] == 213:
-                    self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                        self.plugin.inferencer._buffer_check()
+                    elif response['statusCode'] == 213:
+                        self.plugin.inferencer.REQUEST_INTERVAL= 300.0
+                    else:
+                        self.plugin.inferencer.pred = False
+                        self.parameters['bad_responses'] += 1
+                        self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
+                        self.plugin._logger.info(
+                            "Payload: {} {}".format(
+                                self.plugin._settings.get([]),
+                                self.parameters
+                            )
+                        )
+                        self.plugin._logger.info(
+                            "Response: {}".format(response)
+                        )
                 else:
-                    self.plugin.inferencer.pred = False
-                    self.parameters['bad_responses'] += 1
-                    self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
                     self.plugin._logger.info(
-                        "Payload: {} {}".format(
-                            self.plugin._settings.get([]),
-                            self.parameters
-                        )
-                    )
-                    self.plugin._logger.info(
-                        "Response: {}".format(response)
+                        "Invalid API key or printer ID"
                     )
 
             except Exception as e:
@@ -285,9 +295,14 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.parameters['notification'] = notification_level
                 self.parameters['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
                 response = await self._send('api/v2/notify')
-                self.plugin._logger.info(
-                    "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
-                )
+                if not isinstance(response, bool):
+                    self.plugin._logger.info(
+                        "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
+                    )
+                else:
+                    self.plugin._logger.info(
+                        "Invalid API key or printer ID"
+                    )
             except Exception as e:
                 self.plugin._logger.info(
                     "Error retrieving server response for email notification: {}".format(str(e))
