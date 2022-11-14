@@ -106,7 +106,7 @@ class Inferencer():
 
 
     def kill_service(self):
-        self.plugin._logger.info('Just shut down aio')
+        self.plugin._logger.info('AIO loop closed')
         self.run_thread = False
         self.inference_loop = None
         self.REQUEST_INTERVAL = 10.0

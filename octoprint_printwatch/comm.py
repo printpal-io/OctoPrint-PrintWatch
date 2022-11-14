@@ -128,7 +128,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"]),
                 'enable_feedback_images' : self.plugin._settings.get(['enable_feedback_images'])
             }
-        self.plugin._logger.info('PAYLOAD: {}'.format(r))
+
         return r
 
 
@@ -144,7 +144,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                                 timeout=aiohttp.ClientTimeout(total=self.timeout if endpoint is not 'api/v2/notify' else 30.0)
                             ) as response:
                             r = await response.json()
-            self.plugin._logger.info('got send response: {}'.format(r))
             self.response = r
             return r
         else:
@@ -209,12 +208,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
     async def send_request(self):
         self.image = self.plugin.streamer.grab_frame()
-        self.plugin._logger.info('trying send_request')
         if not isinstance(self.image, bool):
             try:
-                self.plugin._logger.info('Beginning send await')
                 response = await self._send()
-                self.plugin._logger.info('Inference request reponse: {}'.format(response))
                 if not isinstance(response, bool):
                     self.parameters['last_t'] = time()
                     if response['statusCode'] == 200:
