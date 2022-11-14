@@ -133,7 +133,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
     async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False):
-        if self.plugin._seetings.get(['api_key']) not in ['', None] and  self.plugin._seetings.get(['printer_id']) not in ['', None]:
+        if self.plugin._settings.get(['api_key']) not in ['', None] and  self.plugin._settings.get(['printer_id']) not in ['', None]:
             data = self._create_payload(force_state=force_state, include_settings=include_settings) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings)
 
             async with aiohttp.ClientSession() as session:
