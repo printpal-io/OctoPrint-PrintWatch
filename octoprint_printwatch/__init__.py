@@ -47,7 +47,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             self.inferencer.begin_cooldown()
         self._settings.save()
         self._plugin_manager.send_plugin_message(self._identifier, dict(type="onSave"))
-        asyncio.ensure_future(self.comm_manager._send('api/v2/heartbeat', include_settings=True))
+        asyncio.ensure_future(self.comm_manager._send('api/v2/heartbeat', include_settings=True, force=True))
 
 
 

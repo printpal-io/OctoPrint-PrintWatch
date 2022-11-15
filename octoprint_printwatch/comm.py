@@ -79,7 +79,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
 
-    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False):
+    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False, force : bool = False):
         if force_state > 0:
             state = force_state
         else:
@@ -100,6 +100,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             'version' : self.plugin._plugin_version
         }
 
+        r['force'] = 'True' if force else 'False'
+        
         if image is not None:
             print_job_info = self.plugin._printer.get_current_data()
             r['image_array'] = image
@@ -128,12 +130,13 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"]),
                 'enable_feedback_images' : self.plugin._settings.get(['enable_feedback_images'])
             }
+
         return r
 
 
-    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False):
+    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False, force=False):
         if self.plugin._settings.get(['api_key']) not in ['', None] and  self.plugin._settings.get(['printer_id']) not in ['', None]:
-            data = self._create_payload(force_state=force_state, include_settings=include_settings) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings)
+            data = self._create_payload(force_state=force_state, include_settings=include_settings, force=force) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings, force=force)
 
             async with aiohttp.ClientSession() as session:
                 async with session.post(
