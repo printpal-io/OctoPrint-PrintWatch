@@ -128,9 +128,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 'extruder_heat_off' : self.plugin._settings.get(["enable_extruder_shutoff"]),
                 'enable_feedback_images' : self.plugin._settings.get(['enable_feedback_images'])
             }
-        re = r
-        re['image_array'] = ''
-        self.plugin._logger.info('PAYLOAD: {}'.format(re))
         return r
 
 
