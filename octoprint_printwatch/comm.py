@@ -138,7 +138,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             r['progress'] = print_job_info.get('progress').get('completion')
             r['job_name'] = self.plugin._printer.get_current_job().get('file').get('name')
             r['email_addr'] = self.plugin._settings.get(["email_addr"])
-            r['time'] = notification_level
+            r['notification'] = notification_level
             r['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
         return r
