@@ -132,6 +132,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             }
 
         if notify:
+            print_job_info = self.plugin._printer.get_current_data()
             r['printTime'] = print_job_info.get('progress').get('printTime')
             r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft')
             r['progress'] = print_job_info.get('progress').get('completion')
