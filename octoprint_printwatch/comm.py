@@ -79,7 +79,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
 
-    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False, force : bool = False):
+    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False, force : bool = False, notify : bool = False, notification_level : str = ''):
         if force_state > 0:
             state = force_state
         else:
@@ -101,7 +101,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         }
 
         r['force'] = 'True' if force else 'False'
-        
+
         if image is not None:
             print_job_info = self.plugin._printer.get_current_data()
             r['image_array'] = image
@@ -131,12 +131,26 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 'enable_feedback_images' : self.plugin._settings.get(['enable_feedback_images'])
             }
 
+        if notify:
+            r['printTime'] = print_job_info.get('progress').get('printTime')
+            r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft')
+            r['progress'] = print_job_info.get('progress').get('completion')
+            r['job_name'] = self.plugin._printer.get_current_job().get('file').get('name')
+            r['email_addr'] = self.plugin._settings.get(["email_addr"])
+            r['time'] = notification_level
+            r['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+
         return r
 
 
-    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False, force=False):
+    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False, force=False, notification_level=''):
         if self.plugin._settings.get(['api_key']) not in ['', None] and  self.plugin._settings.get(['printer_id']) not in ['', None]:
-            data = self._create_payload(force_state=force_state, include_settings=include_settings, force=force) if endpoint =='api/v2/heartbeat' else self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings, force=force)
+            if endpoint =='api/v2/heartbeat':
+                data = self._create_payload(force_state=force_state, include_settings=include_settings, force=force)
+            elif endpoint == 'api/v2/notify':
+                data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level)
+            else:
+                 data = self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings, force=force)
 
             async with aiohttp.ClientSession() as session:
                 async with session.post(
@@ -291,9 +305,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
     async def email_notification(self, notification_level):
         if self.plugin._settings.get(["enable_email_notification"]):
             try:
-                self.parameters['notification'] = notification_level
-                self.parameters['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-                response = await self._send('api/v2/notify')
+                response = await self._send('api/v2/notify', notification_level=notification_level)
                 if not isinstance(response, bool):
                     self.plugin._logger.info(
                         "Notification sent to {}".format(self.plugin._settings.get(["email_addr"]))
