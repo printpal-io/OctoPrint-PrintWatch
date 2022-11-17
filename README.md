@@ -8,7 +8,7 @@
         <img alt="Documentation" src="https://img.shields.io/badge/website-online-brightgreen">
     </a>
     <a href="https://github.com/printpal-io/OctoPrint-PrintWatch/releases">
-        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.1.1-blue">
+        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.2.1-blue">
     </a>
     <a href="https://printpal.pythonanywhere.com/api/status">
         <img alt="API Status" src="https://img.shields.io/badge/API-online-brightgreen">
@@ -42,19 +42,17 @@
   <li>Anomalous Printer Detection</li>
   <li>Advanced Analytics</li>
   <li>Resume Print</li>
-    <li>Weekly builds of the Object Detection model</li>
 </ul>
 <p>
     Upcoming features include:
 </p>
 <ul>
-  <li>Pre+post print bed check</li>
-  <li>Live QC/QA</li>
-  <li>Web Application re-work</li>
+  <li>Pre+post print bed check - currently in BETA. Contact us to join.</li>
+  <li>Live QC/QA - currently in BETA. Contact us to join.</li>
   <li>G-Code and Speed optimization with ML</li>
-  <li>MultiCamming</li>
-  <li>ROI selection and slicing</li>
-  <li>Local Device</li>
+  <li>MultiCamming - currently available using the API Client repository</li>
+  <li>ROI selection and slicing - currently available using the API Client repository</li>
+  <li>Local Device - currently in pilot program phase. Contact us to get a copy.</li>
 </ul>
 <h3>
   Setup

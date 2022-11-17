@@ -48,13 +48,6 @@ $(function() {
           return ;
         }
 
-        self.sendFeedback = function() {
-          classification = document.getElementById('class_type').value;
-          OctoPrint.simpleApiCommand("printwatch", "sendFeedback", {"class": classification})
-                  .done(function(response) {
-              return
-          });
-        }
 
         self.renderChart = function(chart, data, pop) {
           buffer_length = self.settings.settings.plugins.printwatch.buffer_length()

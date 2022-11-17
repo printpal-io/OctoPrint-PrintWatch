@@ -5,7 +5,7 @@ from .videostreamer import VideoStreamer
 from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
-
+import asyncio
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.ShutdownPlugin,
@@ -19,24 +19,11 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
     def on_after_startup(self):
         self._logger.info("Loading PrintWatch...")
-        self.comm_manager = CommManager(self)
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
+        self.comm_manager = CommManager(self)
         self.controller = PrinterControl(self)
 
-    def get_api_commands(self):
-        return dict(
-            sendFeedback=[]
-        )
-
-    def on_api_command(self, command, data):
-        if command == 'sendFeedback':
-            self.comm_manager.send_feedback(data.get("class"))
-            self._logger.info(
-                "Defect report sending to server for type: {}".format(data.get("class"))
-            )
-            return
-        return
 
     def get_update_information(self):
         return dict(
@@ -60,6 +47,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             self.inferencer.begin_cooldown()
         self._settings.save()
         self._plugin_manager.send_plugin_message(self._identifier, dict(type="onSave"))
+        asyncio.ensure_future(self.comm_manager._send('api/v2/heartbeat', include_settings=True, force=True))
+
 
 
     def get_settings_defaults(self):
@@ -77,7 +66,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             buffer_length = 16,
             buffer_percent = 80,
             enable_feedback_images = True,
-            api_key = ''
+            api_key = '',
+            printer_id = None
             )
 
     def get_template_configs(self):
@@ -116,11 +106,9 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             if self.inferencer.triggered:
                 self.inferencer.shutoff_event()
             self.inferencer.kill_service()
+            self.comm_manager.start_service()
 
-            if event == Events.PRINT_PAUSED:
-                self.comm_manager.start_service()
-            else:
-                self.comm_manager.kill_service()
+            if event is not Events.PRINT_PAUSED:
                 self._plugin_manager.send_plugin_message(
                     self._identifier,
                     dict(type="resetPlot")
@@ -128,15 +116,17 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
 
+
     def on_shutdown(self):
         self.inferencer.run_thread = False
-
+        self.comm_manager.aio.run_until_complete(self.comm_manager._send('api/v2/heartbeat', force_state=500))
+        self._logger.info('Forced printer state OFF')
 
 
 __plugin_name__ = "PrintWatch"
-__plugin_version__ = "1.1.111"
+__plugin_version__ = "1.2.1"
 __plugin_description__ = "PrintWatch watches your prints for defects and optimizes your 3D printers using Artificial Intelligence."
-__plugin_pythoncompat__ = ">=2.7,<4"
+__plugin_pythoncompat__ = ">=3.6,<4"
 __plugin_implementation__ = PrintWatchPlugin()
 
 
