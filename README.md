@@ -31,7 +31,8 @@
 </ul>
 
 <p>
-  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
+  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for 
+    in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
 </p>
 <p>
     Current features include:
@@ -232,7 +233,7 @@
 <img src="/extras/images/printwatch-web-app-main-page.jpg" alt="Web App main page" title="Web App main page">
 <br>
 <p>
-  Preview each printers webcam, view the AI detection level, change settings, and issue print commands.
+  Preview each printer's webcam, view the AI detection level, change settings, and issue print commands.
 </p>
 <img src="/extras/images/printwatch-web-app-individual-printer.jpg" alt="Web App individual printer page" title="Web App main individual printer page">
 
