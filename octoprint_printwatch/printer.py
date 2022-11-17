@@ -1,5 +1,5 @@
 class PrinterControl():
-
+    
     def __init__(self, plugin):
         self.plugin = plugin
         self._temperatures = None

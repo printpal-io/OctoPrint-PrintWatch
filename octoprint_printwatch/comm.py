@@ -11,7 +11,7 @@ import PIL.Image as Image
 from PIL import ImageDraw
 
 
-DEFAULT_ROUTE = 'http://139.144.26.196:8888'
+DEFAULT_ROUTE = 'https://ai.printpal.io'
 
 PRINTING_STATES = [
                     'printing',
