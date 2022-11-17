@@ -226,9 +226,10 @@
   You can access all of your printers from anywhere in the world using the Web App.
 </p>
 <br>
-[GitHub Logo](/extras/images/printwatch-web-app-main-page.jpg)
+<img src="/extras/images/printwatch-web-app-main-page.jpg" alt="Web App main page" title="Web App main page">
 <br>
-[GitHub Logo](/extras/images/printwatch-web-app-individual-printer.jpg)
+<img src="/extras/images/printwatch-web-app-individual-printer.jpg" alt="Web App individual printer page" title="Web App main individual printer page">
+
 <br>
 <h3>
   More about PrintWatch
