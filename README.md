@@ -220,6 +220,17 @@
     To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
 </p>
 <h3>
+  Web App
+</h3>
+<p>
+  You can access all of your printers from anywhere in the world using the Web App.
+</p>
+<br>
+[GitHub Logo](/extras/images/printwatch-web-app-main-page.jpg)
+<br>
+[GitHub Logo](/extras/images/printwatch-web-app-individual-printer.jpg)
+<br>
+<h3>
   More about PrintWatch
 </h3>
 <p>
