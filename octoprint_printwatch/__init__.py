@@ -124,7 +124,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
 __plugin_name__ = "PrintWatch"
-__plugin_version__ = "1.1.111"
+__plugin_version__ = "1.2.1"
 __plugin_description__ = "PrintWatch watches your prints for defects and optimizes your 3D printers using Artificial Intelligence."
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = PrintWatchPlugin()
