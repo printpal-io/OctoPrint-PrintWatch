@@ -226,8 +226,14 @@
   You can access all of your printers from anywhere in the world using the Web App.
 </p>
 <br>
+<p>
+  Manage all of your printers in one place.
+</p>
 <img src="/extras/images/printwatch-web-app-main-page.jpg" alt="Web App main page" title="Web App main page">
 <br>
+<p>
+  Preview each printers webcam, view the AI detection level, change settings, and issue print commands.
+</p>
 <img src="/extras/images/printwatch-web-app-individual-printer.jpg" alt="Web App individual printer page" title="Web App main individual printer page">
 
 <br>
