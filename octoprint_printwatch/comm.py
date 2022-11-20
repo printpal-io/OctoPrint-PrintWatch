@@ -282,6 +282,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin.inferencer.pred = False
                 self.parameters['last_t'] = time()
         else:
+            self.parameters['bad_responses'] += 1
+            self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
             self.plugin._logger.info('Issue acquiring the snapshot frame from the URL provided in the settings. - {}'.format(self.image))
 
     def draw_boxes(self, boxes):

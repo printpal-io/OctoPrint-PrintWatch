@@ -132,7 +132,7 @@ class Inferencer():
 
     def notification_event(self, notification_level):
         asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
-        #self.aio.run_until_complete(self.plugin.comm_manager.email_notification(notification_level))
+
 
     def begin_cooldown(self):
         self.cooldown_time = time()

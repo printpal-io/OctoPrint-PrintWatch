@@ -16,4 +16,5 @@ class VideoStreamer():
             self.plugin._logger.info("Issue with the stream url input.")
             return False
         except Exception as e:
-            return str(e)
+            self.plugin._logger.info("Issue acquiring frame from URL provided: {}".format(str(e)))
+            return False
