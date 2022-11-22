@@ -217,7 +217,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 asyncio.set_event_loop(self.aio)
                 self.plugin._logger.info("PrintWatch heartbeat service started")
                 if self.plugin.inferencer.triggered:
-                    self.notification_event('action')
+                    self.plugin.inferencer.notification_event('action')
 
 
     def kill_service(self):
