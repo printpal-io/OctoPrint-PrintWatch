@@ -127,12 +127,9 @@ class Inferencer():
 
     def shutoff_event(self):
         self.plugin.controller.shutoff_actions(self.plugin._settings.get(["enable_extruder_shutoff"]))
-        if self.triggered:
-            self.notification_event('action')
 
     def notification_event(self, notification_level):
-        t1 = asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
-        asyncio.gather(t1)
+        asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
 
 
     def begin_cooldown(self):
