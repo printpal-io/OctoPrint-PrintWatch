@@ -8,7 +8,7 @@
         <img alt="Documentation" src="https://img.shields.io/badge/website-online-brightgreen">
     </a>
     <a href="https://github.com/printpal-io/OctoPrint-PrintWatch/releases">
-        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.1.1-blue">
+        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.2.1-blue">
     </a>
     <a href="https://printpal.pythonanywhere.com/api/status">
         <img alt="API Status" src="https://img.shields.io/badge/API-online-brightgreen">
@@ -31,7 +31,8 @@
 </ul>
 
 <p>
-  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for printers in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
+  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for 
+    in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
 </p>
 <p>
     Current features include:
@@ -42,19 +43,17 @@
   <li>Anomalous Printer Detection</li>
   <li>Advanced Analytics</li>
   <li>Resume Print</li>
-    <li>Weekly builds of the Object Detection model</li>
 </ul>
 <p>
     Upcoming features include:
 </p>
 <ul>
-  <li>Pre+post print bed check</li>
-  <li>Live QC/QA</li>
-  <li>Web Application re-work</li>
+  <li>Pre+post print bed check - currently in BETA. Contact us to join.</li>
+  <li>Live QC/QA - currently in BETA. Contact us to join.</li>
   <li>G-Code and Speed optimization with ML</li>
-  <li>MultiCamming</li>
-  <li>ROI selection and slicing</li>
-  <li>Local Device</li>
+  <li>MultiCamming - currently available using the API Client repository</li>
+  <li>ROI selection and slicing - currently available using the API Client repository</li>
+  <li>Local Device - currently in pilot program phase. Contact us to get a copy.</li>
 </ul>
 <h3>
   Setup
@@ -221,6 +220,24 @@
 <p>
     To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
 </p>
+<h3>
+  Web App
+</h3>
+<p>
+  You can access all of your printers from anywhere in the world using the Web App.
+</p>
+<br>
+<p>
+  Manage all of your printers in one place.
+</p>
+<img src="/extras/images/printwatch-web-app-main-page.jpg" alt="Web App main page" title="Web App main page">
+<br>
+<p>
+  Preview each printer's webcam, view the AI detection level, change settings, and issue print commands.
+</p>
+<img src="/extras/images/printwatch-web-app-individual-printer.jpg" alt="Web App individual printer page" title="Web App main individual printer page">
+
+<br>
 <h3>
   More about PrintWatch
 </h3>
