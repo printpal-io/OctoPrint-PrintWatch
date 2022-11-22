@@ -50,11 +50,9 @@ class Inferencer():
             if not self.triggered:
                 self.plugin._logger.info("Action level reached")
                 if self.plugin._settings.get(["enable_stop"]):
-                    self.notification_event('action')
                     self._attempt_action('cancel')
                     self.triggered = True
                 elif self.plugin._settings.get(["enable_shutoff"]):
-                    self.notification_event('action')
                     self._attempt_action('pause')
                     self.triggered = True
         elif self.action_level[0]:
@@ -129,12 +127,12 @@ class Inferencer():
 
     def shutoff_event(self):
         self.plugin.controller.shutoff_actions(self.plugin._settings.get(["enable_extruder_shutoff"]))
+        if self.triggered:
+            self.notification_event('action')
 
     def notification_event(self, notification_level):
-        asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
-
-
-
+        t1 = asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
+        asyncio.gather(t1)
 
 
     def begin_cooldown(self):
