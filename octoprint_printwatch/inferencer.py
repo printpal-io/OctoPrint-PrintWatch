@@ -95,7 +95,7 @@ class Inferencer():
                 self.aio = asyncio.new_event_loop()
                 asyncio.set_event_loop(self.aio)
                 self.plugin._logger.info("PrintWatch inference service started")
-                if self.plugin._settings.get(["disable_flashing_icon"]):
+                if not self.plugin._settings.get(["disable_flashing_icon"]):
                     self.plugin._plugin_manager.send_plugin_message(
                         self.plugin._identifier,
                         dict(
@@ -118,7 +118,7 @@ class Inferencer():
         self.smas = []
         self.current_percent = 0.0
         self.plugin._logger.info("PrintWatch inference service terminated")
-        if self.plugin._settings.get(["disable_flashing_icon"]):
+        if not self.plugin._settings.get(["disable_flashing_icon"]):
             self.plugin._plugin_manager.send_plugin_message(
                 self.plugin._identifier,
                 dict(
