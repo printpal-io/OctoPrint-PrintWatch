@@ -95,13 +95,14 @@ class Inferencer():
                 self.aio = asyncio.new_event_loop()
                 asyncio.set_event_loop(self.aio)
                 self.plugin._logger.info("PrintWatch inference service started")
-                self.plugin._plugin_manager.send_plugin_message(
-                    self.plugin._identifier,
-                    dict(
-                        type="icon",
-                        icon='plugin/printwatch/static/img/printwatch-green.gif'
+                if self.plugin._settings.get(["enable_flashing_icon"]):
+                    self.plugin._plugin_manager.send_plugin_message(
+                        self.plugin._identifier,
+                        dict(
+                            type="icon",
+                            icon='plugin/printwatch/static/img/printwatch-green.gif'
+                        )
                     )
-                )
 
 
 
@@ -117,13 +118,14 @@ class Inferencer():
         self.smas = []
         self.current_percent = 0.0
         self.plugin._logger.info("PrintWatch inference service terminated")
-        self.plugin._plugin_manager.send_plugin_message(
-            self.plugin._identifier,
-            dict(
-                type="icon",
-                icon='plugin/printwatch/static/img/printwatch-grey.png'
+        if self.plugin._settings.get(["enable_flashing_icon"]):
+            self.plugin._plugin_manager.send_plugin_message(
+                self.plugin._identifier,
+                dict(
+                    type="icon",
+                    icon='plugin/printwatch/static/img/printwatch-grey.png'
+                )
             )
-        )
 
     def shutoff_event(self):
         self.plugin.controller.shutoff_actions(self.plugin._settings.get(["enable_extruder_shutoff"]))

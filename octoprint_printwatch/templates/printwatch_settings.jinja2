@@ -38,6 +38,12 @@
                 <div class="help-block">{{ _('By enabling this, you allow images sent to the server for AI detection to be used to enhance the detection model. Only questionable images are sampled to further train the model. For more information visit the printpal.io website.') }}</div>
               </label>
             </div>
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox" data-bind="checked: settings.plugins.printwatch.enable_flashing_icon"> {{ _('Enable flashing navbar icon') }}
+                <div class="help-block">{{ _('By enabling this, the PrintWatch icon on the OctoPrint navbar flashes when active.') }}</div>
+              </label>
+            </div>
           </td>
         </tr>
       </table>
