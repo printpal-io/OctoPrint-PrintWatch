@@ -246,7 +246,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                                 image=self.draw_boxes(boxes)
                             )
                         )
-                        if self.plugin._settings.get(["enable_flashing_icon"])
+                        if self.plugin._settings.get(["enable_flashing_icon"]):
                             self.plugin._plugin_manager.send_plugin_message(
                                 self.plugin._identifier,
                                 dict(
