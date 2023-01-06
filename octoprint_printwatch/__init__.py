@@ -68,7 +68,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             enable_feedback_images = True,
             api_key = '',
             printer_id = None,
-            disable_flashing_icon = False
+            enable_flashing_icon = False
             )
 
     def get_template_configs(self):
