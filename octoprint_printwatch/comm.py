@@ -166,7 +166,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 data = self._create_payload(force_state=force_state, include_settings=include_settings, force=force)
             elif endpoint == 'api/v2/notify':
                 data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level)
-            elif endpoint == 'api/v2/event':
+            elif endpoint == 'api/v2/print/event':
                 data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level, event=event)
             else:
                  data = self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings, force=force)
