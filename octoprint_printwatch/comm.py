@@ -112,7 +112,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             r['buffer_percent'] = int(self.plugin._settings.get(["buffer_percent"]))
             r['thresholds'] = [int(self.plugin._settings.get(["notification_threshold"]))/100.0, int(self.plugin._settings.get(["action_threshold"]))/100.0]
             r['scores'] = self.plugin.inferencer.scores
-            r['printTime'] = print_job_info.get('progress').get('printTime')
+            r['printTime'] = print_job_info.get('progress').get('printTime') + 500 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**@#*(@*$(*(**@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)))
             r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft')
             r['progress'] = print_job_info.get('progress').get('completion')
             r['job_name'] = self.plugin._printer.get_current_job().get('file').get('name')
@@ -343,7 +343,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 )
 
     def event_feedback(self, event):
-        self.aio.run_until_complete(self._send('api/v2/print/event', event=event))
+        asyncio.ensure_future(self._send('api/v2/print/event', event=event))
 
     def new_ticket(self):
         self._create_ticket()
