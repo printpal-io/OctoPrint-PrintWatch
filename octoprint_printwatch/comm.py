@@ -342,7 +342,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     "Error retrieving server response for email notification: {}".format(str(e))
                 )
 
-    def event_feedback(self, event, args : None):
+    def event_feedback(self, event):
         self.aio.run_until_complete(self.comm_manager._send('api/v2/print/event', event=event))
 
     def new_ticket(self):
