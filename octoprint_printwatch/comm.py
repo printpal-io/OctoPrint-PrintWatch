@@ -11,7 +11,7 @@ import PIL.Image as Image
 from PIL import ImageDraw
 
 
-DEFAULT_ROUTE = 'https://ai.printpal.io'
+DEFAULT_ROUTE = 'https://test.printpal.io'
 
 PRINTING_STATES = [
                     'printing',
@@ -79,7 +79,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
 
-    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False, force : bool = False, notify : bool = False, notification_level : str = ''):
+    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False, force : bool = False, notify : bool = False, notification_level : str = '', event=None):
+        # Clean up in 1.2.2
         if force_state > 0:
             state = force_state
         else:
@@ -97,7 +98,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             'api_key' : self.plugin._settings.get(["api_key"]),
             'printer_id' : self.plugin._settings.get(["printer_id"]),
             'state' : state,
-            'version' : self.plugin._plugin_version
+            'version' : self.plugin._plugin_version,
+            'ticket_id' : self.parameters['ticket']
         }
 
         r['force'] = 'True' if force else 'False'
@@ -141,15 +143,31 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             r['notification'] = notification_level
             r['time'] = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
+        if event is not None:
+            print_job_info = self.plugin._printer.get_current_data()
+            event_package = {
+                'type': event,
+                'time': time(),
+                'time_elapsed': r['printTime'] = print_job_info.get('progress').get('printTime'),
+                'time_left': r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft'),
+                'level': ,
+                'timestamp' : datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+            }
+            r['event'] = event_package
+
+
         return r
 
 
-    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False, force=False, notification_level=''):
+    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False, force=False, notification_level='', event=None):
         if self.plugin._settings.get(['api_key']) not in ['', None] and  self.plugin._settings.get(['printer_id']) not in ['', None]:
+            # Clean up in 1.2.2
             if endpoint =='api/v2/heartbeat':
                 data = self._create_payload(force_state=force_state, include_settings=include_settings, force=force)
             elif endpoint == 'api/v2/notify':
                 data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level)
+            elif endpoint == 'api/v2/event':
+                data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level, event=event)
             else:
                  data = self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings, force=force)
 
@@ -324,7 +342,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     "Error retrieving server response for email notification: {}".format(str(e))
                 )
 
-
+    def event_feedback(self, event, args : None):
+        self.aio.run_until_complete(self.comm_manager._send('api/v2/print/event', event=event))
 
     def new_ticket(self):
         self._create_ticket()
