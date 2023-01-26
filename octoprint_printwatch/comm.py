@@ -148,9 +148,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             event_package = {
                 'type': event,
                 'time': time(),
-                'time_elapsed': r['printTime'] = print_job_info.get('progress').get('printTime'),
-                'time_left': r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft'),
-                'level': ,
+                'time_elapsed': print_job_info.get('progress').get('printTime'),
+                'time_left': print_job_info.get('progress').get('printTimeLeft'),
+                'level': self.plugin.inferencer.smas[-1][0] if len(self.plugin.inferencer.smas) > 0 else 0,
                 'timestamp' : datetime.now().strftime("%m/%d/%Y %H:%M:%S")
             }
             r['event'] = event_package
