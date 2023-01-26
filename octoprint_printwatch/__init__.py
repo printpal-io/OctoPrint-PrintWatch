@@ -105,11 +105,11 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             Events.PRINT_DONE,
             Events.PRINT_FAILED
             ):
-            self.comm_manager.event_feedback(str(event))
             if self.inferencer.triggered:
                 self.inferencer.shutoff_event()
             self.inferencer.kill_service()
             self.comm_manager.start_service()
+            self.comm_manager.event_feedback(str(event))
 
             if event is not Events.PRINT_PAUSED:
                 self._plugin_manager.send_plugin_message(
