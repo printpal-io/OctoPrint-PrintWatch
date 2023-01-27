@@ -8,7 +8,7 @@
         <img alt="Documentation" src="https://img.shields.io/badge/website-online-brightgreen">
     </a>
     <a href="https://github.com/printpal-io/OctoPrint-PrintWatch/releases">
-        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.2.1-blue">
+        <img alt="GitHub release" src="https://img.shields.io/badge/release-1.2.11-blue">
     </a>
     <a href="https://printpal.pythonanywhere.com/api/status">
         <img alt="API Status" src="https://img.shields.io/badge/API-online-brightgreen">
@@ -31,7 +31,7 @@
 </ul>
 
 <p>
-  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for 
+  PrintWatch saves time and material while also giving you peace of mind that your 3D print is printing properly. In addition to detecting defects, PrintWatch has an Anomaly Detection model running in the background that can detect slight changes or anomalies for
     in your fleet. Get notified early and schedule maintenance for the problematic printer, reducing downtime and costs. PrintWatch's Web App allows you to remotely view and manage all of your printers from anywhere in the world.
 </p>
 <p>
@@ -238,5 +238,3 @@
 <img src="/extras/images/printwatch-web-app-individual-printer.jpg" alt="Web App individual printer page" title="Web App main individual printer page">
 
 <br>
-
-
