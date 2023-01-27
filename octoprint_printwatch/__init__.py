@@ -98,6 +98,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 self.controller.restart()
             self.inferencer.start_service()
             self.comm_manager.kill_service()
+            self.comm_manager.event_feedback(str(event))
         elif event in (
             Events.PRINT_PAUSED,
             Events.PRINT_CANCELLED,
@@ -108,6 +109,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                 self.inferencer.shutoff_event()
             self.inferencer.kill_service()
             self.comm_manager.start_service()
+            self.comm_manager.event_feedback(str(event))
 
             if event is not Events.PRINT_PAUSED:
                 self._plugin_manager.send_plugin_message(
@@ -125,7 +127,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
 __plugin_name__ = "PrintWatch"
-__plugin_version__ = "1.2.1"
+__plugin_version__ = "1.2.11"
 __plugin_description__ = "PrintWatch watches your prints for defects and optimizes your 3D printers using Artificial Intelligence."
 __plugin_pythoncompat__ = ">=3.6,<4"
 __plugin_implementation__ = PrintWatchPlugin()
