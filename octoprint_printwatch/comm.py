@@ -112,7 +112,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             r['buffer_percent'] = int(self.plugin._settings.get(["buffer_percent"]))
             r['thresholds'] = [int(self.plugin._settings.get(["notification_threshold"]))/100.0, int(self.plugin._settings.get(["action_threshold"]))/100.0]
             r['scores'] = self.plugin.inferencer.scores
-            r['printTime'] = print_job_info.get('progress').get('printTime') + 500 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**@#*(@*$(*(**@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)))
+            r['printTime'] = print_job_info.get('progress').get('printTime')
             r['printTimeLeft'] = print_job_info.get('progress').get('printTimeLeft')
             r['progress'] = print_job_info.get('progress').get('completion')
             r['job_name'] = self.plugin._printer.get_current_job().get('file').get('name')
