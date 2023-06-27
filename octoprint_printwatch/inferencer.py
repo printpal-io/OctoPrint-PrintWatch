@@ -14,7 +14,7 @@ class Inferencer():
         self.triggered = False
         self.warning_notification = False
         self.pred = False
-        self.REQUEST_INTERVAL = 10.0
+        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else 30.0
         self.inference_loop = None
         self.action_level = []
         self.cooldown_time = 0.0
@@ -110,7 +110,7 @@ class Inferencer():
         self.plugin._logger.info('AIO loop closed')
         self.run_thread = False
         self.inference_loop = None
-        self.REQUEST_INTERVAL = 10.0
+        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else 30.0
         self.plugin.comm_manager.parameters['bad_responses'] = 0
         self.circular_buffer = []
         self.action_level = []
