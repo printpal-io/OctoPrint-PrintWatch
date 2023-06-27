@@ -47,8 +47,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         self.timeout = 10.0
         self.response = None
         self.aio = None
-        if self.plugin._settings.get(["printer_id"]) is None:
-            self.plugin._settings.set(['printer_id'], uuid4().hex)
         self.parameters = {
                             'ticket' : '',
                             'last_t' : 0.0,
@@ -57,6 +55,9 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'notification' : ''
                             }
 
+    def _init_op(self):
+        if self.plugin._settings.get(["printer_id"]) is None:
+            self.plugin._settings.set(['printer_id'], uuid4().hex)
 
     def _heartbeat(self):
         init = True

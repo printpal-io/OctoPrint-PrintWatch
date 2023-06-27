@@ -6,7 +6,6 @@ from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
 import asyncio
-import logging
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            octoprint.plugin.ShutdownPlugin,
@@ -19,7 +18,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
     def __init__(self):
-        self._logger = logging.getLogger('octoprint.plugins.printwatch')
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
         self.comm_manager = CommManager(self)
@@ -28,6 +26,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
     def on_after_startup(self):
         self._logger.info("Loading PrintWatch...")
+        self.inferencer._init_op()
+        self.comm_manager._init_op()
         self.comm_manager.start_service()
 
 

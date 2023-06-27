@@ -14,13 +14,16 @@ class Inferencer():
         self.triggered = False
         self.warning_notification = False
         self.pred = False
-        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else 30.0
+        self.REQUEST_INTERVAL = 10.0
         self.inference_loop = None
         self.action_level = []
         self.cooldown_time = 0.0
         self.smas = []
         self.aio = None
 
+
+    def _init_op(self):
+        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else 30.0
 
     def _buffer_check(self):
         buffer_length = int(self.plugin._settings.get(["buffer_length"]))
