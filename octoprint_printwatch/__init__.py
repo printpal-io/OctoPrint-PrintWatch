@@ -17,12 +17,16 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                            ):
 
 
-    def on_after_startup(self):
+    def __init__(self):
         self._logger.info("Loading PrintWatch...")
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
         self.comm_manager = CommManager(self)
         self.controller = PrinterControl(self)
+
+
+    def on_after_startup(self):
+        self.comm_manager.start_service()
 
 
     def get_update_information(self):

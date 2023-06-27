@@ -56,7 +56,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'bad_responses' : 0,
                             'notification' : ''
                             }
-        self.start_service()
 
 
     def _heartbeat(self):
