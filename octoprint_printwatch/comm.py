@@ -254,7 +254,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                         self._appends(response)
                         self._check_action(response)
                         self.parameters['bad_responses'] = 0
-                        self.plugin.inferencer.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else response.get("interval", 30.0)
+                        self.plugin.inferencer.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).startswith("sub_") else response.get("interval", 30.0)
                         self.timeout = 10.0
                         boxes = response['boxes']
                         self.plugin._plugin_manager.send_plugin_message(

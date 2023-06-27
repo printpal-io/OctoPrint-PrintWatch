@@ -23,7 +23,7 @@ class Inferencer():
 
 
     def _init_op(self):
-        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else 30.0
+        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).startswith("sub_") else 30.0
 
     def _buffer_check(self):
         buffer_length = int(self.plugin._settings.get(["buffer_length"]))
@@ -113,7 +113,7 @@ class Inferencer():
         self.plugin._logger.info('AIO loop closed')
         self.run_thread = False
         self.inference_loop = None
-        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).beginswith("sub_") else 30.0
+        self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).startswith("sub_") else 30.0
         self.plugin.comm_manager.parameters['bad_responses'] = 0
         self.circular_buffer = []
         self.action_level = []
