@@ -180,6 +180,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             ) as response:
                             r = await response.json()
             self.response = r
+            self.plugin._logger.info("Resp: {}".format(r))
+          
             return r
         else:
             self.reponse = False
