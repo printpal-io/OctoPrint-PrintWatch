@@ -1,10 +1,10 @@
 class PrinterControl():
-    
+
     def __init__(self, plugin):
         self.plugin = plugin
         self._temperatures = None
 
-    def _extruder_set(self, temperature=0):
+    def _extruder_set(self, temperature : float = 0.0) -> None:
         for extruder in range(self.plugin._printer_profile_manager.get_current().get('extruder').get('count', 1)):
             self.plugin._printer.set_temperature('tool{}'.format(extruder), temperature)
             self.plugin._logger.info(
@@ -12,7 +12,7 @@ class PrinterControl():
             )
 
 
-    def _apply_temperatures(self):
+    def _apply_temperatures(self) -> None:
         _num_extruders = self.plugin._printer_profile_manager.get_current().get('extruder').get('count', 1)
         for extruder in range(_num_extruders):
             _tool_temperature = self._temperatures['tool{}'.format(extruder)]['target']
@@ -22,11 +22,11 @@ class PrinterControl():
             self.plugin._printer.commands("M190 S{}".format(_bed_temperature))
 
 
-    def restart(self):
+    def restart(self) -> None:
         self._apply_temperatures()
 
 
-    def shutoff_actions(self, extruders=False):
+    def shutoff_actions(self, extruders : bool = False) -> None:
         self._temperatures = self.plugin._printer.get_current_temperatures()
         if extruders:
             self._extruder_set()

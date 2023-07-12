@@ -22,10 +22,10 @@ class Inferencer():
         self.aio = None
 
 
-    def _init_op(self):
+    def _init_op(self) -> None:
         self.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).startswith("sub_") else 30.0
 
-    def _buffer_check(self):
+    def _buffer_check(self) -> None:
         buffer_length = int(self.plugin._settings.get(["buffer_length"]))
         if len(self.smas) > 0:
             self.plugin._plugin_manager.send_plugin_message(
@@ -46,7 +46,7 @@ class Inferencer():
         self.action_level = self.action_level if len(self.scores) >= buffer_length else [False, False, False]
         self._action_check()
 
-    def _action_check(self):
+    def _action_check(self) -> None:
         self.warning_notification = time() - self.cooldown_time < 600 and self.cooldown_time > 0.0 if self.cooldown_time > 0.0 else self.warning_notification #10 minute cooldown
         if self.action_level[1]:
             #pause/stop the print
@@ -66,7 +66,7 @@ class Inferencer():
                     self.warning_notification = True
                     self.cooldown_time = 0.0
 
-    def _attempt_action(self, action):
+    def _attempt_action(self, action : str) -> None:
         if action == 'cancel':
             self.plugin._printer.cancel_print()
         else:
@@ -76,7 +76,7 @@ class Inferencer():
         )
 
 
-    def _inferencing(self):
+    def _inferencing(self) -> None:
         self.plugin._logger.info("PrintWatch Inference Loop starting...")
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(0.1) #prevent cpu overload
@@ -85,7 +85,7 @@ class Inferencer():
                     self.aio.run_until_complete(self.plugin.comm_manager.send_request())
 
 
-    def start_service(self):
+    def start_service(self) -> None:
         self.triggered = False
         self.warning_notification = False
         self.plugin.comm_manager.parameters['notification'] =  ''
@@ -109,7 +109,7 @@ class Inferencer():
 
 
 
-    def kill_service(self):
+    def kill_service(self) -> None:
         self.plugin._logger.info('AIO loop closed')
         self.run_thread = False
         self.inference_loop = None
@@ -130,12 +130,12 @@ class Inferencer():
                 )
             )
 
-    def shutoff_event(self):
+    def shutoff_event(self) -> None:
         self.plugin.controller.shutoff_actions(self.plugin._settings.get(["enable_extruder_shutoff"]))
 
-    def notification_event(self, notification_level):
+    def notification_event(self, notification_level : str) -> None:
         asyncio.ensure_future(self.plugin.comm_manager.email_notification(notification_level))
 
 
-    def begin_cooldown(self):
+    def begin_cooldown(self) -> None:
         self.cooldown_time = time()
