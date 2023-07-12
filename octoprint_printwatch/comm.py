@@ -11,7 +11,7 @@ import PIL.Image as Image
 from PIL import ImageDraw
 
 
-DEFAULT_ROUTE = 'http://173.230.133.178:88'
+DEFAULT_ROUTE = 'https://octoprint.printpal.io'
 
 PRINTING_STATES = [
                     'printing',
