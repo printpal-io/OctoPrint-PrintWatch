@@ -14,7 +14,7 @@ plugin_package = "octoprint_printwatch"
 plugin_name = "OctoPrint-Printwatch"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "1.2.11"
+plugin_version = "1.3.01"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -33,7 +33,7 @@ plugin_url = "https://github.com/printpal-io/OctoPrint-PrintWatch"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ["pillow>=9.3,<11", "aiohttp[speedups]>=3.7.4"]
+plugin_requires = ["pillow>=9.3,<11", "aiohttp[speedups]>=3.7.4", "typing"]
 
 
 ### --------------------------------------------------------------------------------------------------------------------

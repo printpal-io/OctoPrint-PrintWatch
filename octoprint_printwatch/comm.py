@@ -9,9 +9,10 @@ from uuid import uuid4
 from io import BytesIO
 import PIL.Image as Image
 from PIL import ImageDraw
+from typing import Union
 
 
-DEFAULT_ROUTE = 'https://ai.printpal.io'
+DEFAULT_ROUTE = 'https://octoprint.printpal.io'
 
 PRINTING_STATES = [
                     'printing',
@@ -47,8 +48,6 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         self.timeout = 10.0
         self.response = None
         self.aio = None
-        if self.plugin._settings.get(["printer_id"]) is None:
-            self.plugin._settings.set(['printer_id'], uuid4().hex)
         self.parameters = {
                             'ticket' : '',
                             'last_t' : 0.0,
@@ -56,10 +55,12 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             'bad_responses' : 0,
                             'notification' : ''
                             }
-        self.start_service()
 
+    def _init_op(self) -> None:
+        if self.plugin._settings.get(["printer_id"]) is None:
+            self.plugin._settings.set(['printer_id'], uuid4().hex)
 
-    def _heartbeat(self):
+    def _heartbeat(self) -> None:
         init = True
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
             sleep(1.0)
@@ -79,8 +80,16 @@ class CommManager(octoprint.plugin.SettingsPlugin):
 
 
 
-    def _create_payload(self, image=None, force_state : int = 0, include_settings : bool = False, force : bool = False, notify : bool = False, notification_level : str = '', event=None):
-        # Clean up in 1.2.2
+    def _create_payload(self,
+            image=None,
+            force_state : int = 0,
+            include_settings : bool = False,
+            force : bool = False,
+            notify : bool = False,
+            notification_level : str = '',
+            event : str = None
+        ) -> dict:
+
         if force_state > 0:
             state = force_state
         else:
@@ -159,17 +168,44 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         return r
 
 
-    async def _send(self, endpoint='api/v2/infer', force_state : int = 0, include_settings = False, force=False, notification_level='', event=None):
-        if self.plugin._settings.get(['api_key']) not in ['', None] and  self.plugin._settings.get(['printer_id']) not in ['', None]:
-            # Clean up in 1.2.2
+    async def _send(self,
+            endpoint : str = 'api/v2/infer',
+            force_state : int = 0,
+            include_settings : bool = False,
+            force : bool = False,
+            notification_level : str = '',
+            event=None
+        ) -> Union[dict, bool]:
+        key = self.plugin._settings.get(['api_key'])
+        if key not in ['', None] and \
+          self.plugin._settings.get(['printer_id']) not in ['', None] and \
+          (key.startswith("fmu_") or key.startswith("sub_")):
+
             if endpoint =='api/v2/heartbeat':
-                data = self._create_payload(force_state=force_state, include_settings=include_settings, force=force)
+                data = self._create_payload(force_state=force_state,
+                                include_settings=include_settings,
+                                force=force
+                        )
             elif endpoint == 'api/v2/notify':
-                data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level)
+                data = self._create_payload(None,
+                                include_settings=include_settings,
+                                force=force,
+                                notify=True,
+                                notification_level=notification_level
+                        )
             elif endpoint == 'api/v2/print/event':
-                data = self._create_payload(None, include_settings=include_settings, force=force, notify=True, notification_level=notification_level, event=event)
+                data = self._create_payload(None,
+                            include_settings=include_settings,
+                            force=force,
+                            notify=True,
+                            notification_level=notification_level,
+                            event=event
+                        )
             else:
-                 data = self._create_payload(image=b64encode(self.image).decode('utf8'), include_settings=include_settings, force=force)
+                 data = self._create_payload(image=b64encode(self.image).decode('utf8'),
+                            include_settings=include_settings,
+                            force=force
+                        )
 
             async with aiohttp.ClientSession() as session:
                 async with session.post(
@@ -180,12 +216,14 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             ) as response:
                             r = await response.json()
             self.response = r
+            self.plugin._logger.info("Resp: {}".format(r))
+
             return r
         else:
             self.reponse = False
             return False
 
-    def _check_action(self, response):
+    def _check_action(self, response : dict) -> None:
         action = response.get('action')
         if action == 'pause':
             while not ((self.plugin._printer.is_pausing() and self.plugin._printer.is_printing()) or self.plugin._printer.is_paused()):
@@ -211,20 +249,20 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             self.plugin._settings.set(['enable_feedback_images'], response.get('settings').get('enable_feedback_images') , self.plugin._settings.get(['enable_feedback_images']))
             self.plugin._settings.save(force=True, trigger_event=True)
 
-    def _create_ticket(self):
+    def _create_ticket(self) -> None:
         ticket = uuid4().hex
         self.parameters['ticket'] = ticket
         self.plugin._logger.info(
             "Ticket {} created for print job".format(ticket)
         )
 
-    def _appends(self, response):
+    def _appends(self, response : dict) -> None:
         self.plugin.inferencer.circular_buffer.append([eval(response['defect_detected']), time()])
         self.plugin.inferencer.scores.append(response['score'])
         self.plugin.inferencer.action_level = response['levels']
         self.plugin.inferencer.smas.append(response['smas'][0])
 
-    def start_service(self):
+    def start_service(self) -> None:
         self.heartbeat = True
         if self.plugin._settings.get(["enable_detector"]):
             if self.plugin.inferencer.inference_loop is None:
@@ -238,12 +276,12 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     self.plugin.inferencer.notification_event('action')
 
 
-    def kill_service(self):
+    def kill_service(self) -> None:
         self.heartbeat = False
         self.heartbeat_loop = None
         self.plugin._logger.info("PrintWatch heartbeat service terminated")
 
-    async def send_request(self):
+    async def send_request(self) -> None:
         self.image = self.plugin.streamer.grab_frame()
         if not isinstance(self.image, bool):
             try:
@@ -254,7 +292,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                         self._appends(response)
                         self._check_action(response)
                         self.parameters['bad_responses'] = 0
-                        self.plugin.inferencer.REQUEST_INTERVAL = 10.0
+                        self.plugin.inferencer.REQUEST_INTERVAL = 10.0 if self.plugin._settings.get(["api_key"]).startswith("sub_") else response.get("interval", 30.0)
                         self.timeout = 10.0
                         boxes = response['boxes']
                         self.plugin._plugin_manager.send_plugin_message(
@@ -307,7 +345,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
             self.plugin._logger.info('Issue acquiring the snapshot frame from the URL provided in the settings. - {}'.format(self.image))
 
-    def draw_boxes(self, boxes):
+    def draw_boxes(self, boxes : list) -> str:
         pil_img = Image.open(BytesIO(self.image))
         process_image = ImageDraw.Draw(pil_img)
         width, height = pil_img.size
@@ -325,7 +363,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         contents = b64encode(out_img.getvalue()).decode('utf8')
         return 'data:image/png;charset=utf-8;base64,' + contents.split('\n')[0]
 
-    async def email_notification(self, notification_level):
+    async def email_notification(self, notification_level : str) -> None:
         if self.plugin._settings.get(["enable_email_notification"]):
             try:
                 response = await self._send('api/v2/notify', notification_level=notification_level)
@@ -342,8 +380,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     "Error retrieving server response for email notification: {}".format(str(e))
                 )
 
-    def event_feedback(self, event):
+    def event_feedback(self, event : str) -> None:
         self.aio.run_until_complete(self._send('api/v2/print/event', event=event))
 
-    def new_ticket(self):
+    def new_ticket(self) -> None:
         self._create_ticket()

@@ -1,11 +1,12 @@
 from urllib.request import urlopen
+from typing import Union
 
 class VideoStreamer():
     def __init__(self, plugin):
         self.plugin = plugin
 
 
-    def grab_frame(self):
+    def grab_frame(self) -> Union[bool, bytes]:
         url = self.plugin._settings.get(["stream_url"])
         try:
             if not url.endswith('stream'):

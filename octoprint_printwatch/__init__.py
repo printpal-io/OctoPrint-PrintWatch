@@ -8,24 +8,30 @@ from .printer import PrinterControl
 import asyncio
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
-                           octoprint.plugin.ShutdownPlugin,
-                           octoprint.plugin.TemplatePlugin,
-                           octoprint.plugin.SettingsPlugin,
-                           octoprint.plugin.AssetPlugin,
-                           octoprint.plugin.EventHandlerPlugin,
-                           octoprint.plugin.SimpleApiPlugin
-                           ):
+                       octoprint.plugin.ShutdownPlugin,
+                       octoprint.plugin.TemplatePlugin,
+                       octoprint.plugin.SettingsPlugin,
+                       octoprint.plugin.AssetPlugin,
+                       octoprint.plugin.EventHandlerPlugin,
+                       octoprint.plugin.SimpleApiPlugin
+       ):
 
 
-    def on_after_startup(self):
-        self._logger.info("Loading PrintWatch...")
+    def __init__(self) -> None:
         self.streamer = VideoStreamer(self)
         self.inferencer = Inferencer(self)
         self.comm_manager = CommManager(self)
         self.controller = PrinterControl(self)
 
 
-    def get_update_information(self):
+    def on_after_startup(self) -> None:
+        self._logger.info("Loading PrintWatch...")
+        self.inferencer._init_op()
+        self.comm_manager._init_op()
+        self.comm_manager.start_service()
+
+
+    def get_update_information(self) -> None:
         return dict(
             printwatch=dict(
                 name=self._plugin_name,
@@ -41,7 +47,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             )
         )
 
-    def on_settings_save(self, data):
+    def on_settings_save(self, data) -> None:
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         if self.inferencer.warning_notification:
             self.inferencer.begin_cooldown()
@@ -51,7 +57,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
 
-    def get_settings_defaults(self):
+    def get_settings_defaults(self) -> dict:
         return dict(
             stream_url = 'http://127.0.0.1/webcam/?action=snapshot',
             enable_detector = True,
@@ -71,20 +77,20 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             enable_flashing_icon = False
             )
 
-    def get_template_configs(self):
+    def get_template_configs(self) -> list:
         return [
             dict(type="settings", custom_bindings=False)
         ]
 
 
-    def get_assets(self):
+    def get_assets(self) -> list:
         return dict(
             js=["js/printwatch.js"],
             css=["css/printwatch.css"]
         )
 
 
-    def on_event(self, event, payload):
+    def on_event(self, event, payload) -> None:
         if event == Events.PRINT_STARTED:
             self.inferencer.start_service()
             self.comm_manager.kill_service()
@@ -120,14 +126,14 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
 
 
 
-    def on_shutdown(self):
+    def on_shutdown(self) -> None:
         self.inferencer.run_thread = False
         self.comm_manager.aio.run_until_complete(self.comm_manager._send('api/v2/heartbeat', force_state=500))
         self._logger.info('Forced printer state OFF')
 
 
 __plugin_name__ = "PrintWatch"
-__plugin_version__ = "1.2.11"
+__plugin_version__ = "1.3.01"
 __plugin_description__ = "PrintWatch watches your prints for defects and optimizes your 3D printers using Artificial Intelligence."
 __plugin_pythoncompat__ = ">=3.6,<4"
 __plugin_implementation__ = PrintWatchPlugin()
