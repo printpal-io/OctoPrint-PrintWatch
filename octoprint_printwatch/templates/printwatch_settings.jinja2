@@ -24,13 +24,23 @@
               <div class="controls">
                 <input type="text" class="input-block-level" data-bind="value: settings.plugins.printwatch.api_key">
               </div>
+              div class="well">
+                <p>
+                  Obtain for free from <a href="https://app.printpal.io">app.printpal.io</a>. See the <a href="https://printpal.io/documentation/quick-start-guide/">Quick Start Guide</a>. 
+                </p>
+              </div>
             </div>
             <div class="control-group">
               <label class="control-label">{{ _('Snapshot URL') }}</label>
               <div class="controls">
                 <input type="text" class="input-block-level" data-bind="value: settings.plugins.printwatch.stream_url">
-                <div class="help-block">{{ _("The webcam snapshot URL that will be used for detection. In most cases this will be the same as the Webcam URL used by OctoPrint in the 'Webcam & Timelapse' section.") }}</div>
+                div class="well">
+                  <p>
+                    The webcam snapshot URL that will be used for detection. In most cases this will be the same as the Webcam snapshot URL used by OctoPrint in the 'Webcam & Timelapse' section. THIS MUST be the URL that returns the static image of the webcam.
+                  </p>
+                </div>
               </div>
+              
             </div>
             <div class="controls">
               <label class="checkbox">
