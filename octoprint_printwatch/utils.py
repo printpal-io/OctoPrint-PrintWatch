@@ -10,7 +10,7 @@ def _flatten_dict(pyobj : dict, keystring : str ='') -> dict:
         yield keystring, pyobj
 
 def flatten_dict(input_dict : dict) -> dict:
-    return {k:v for k,v in flatten_dict(input_dict)}
+    return {k:v for k,v in _flatten_dict(input_dict)}
 
 def ps_util_get_stats() -> dict:
     """
