@@ -4,6 +4,8 @@ from time import time, sleep
 from .utils import *
 from uuid import uuid4
 import csv
+import aiohttp
+import os
 
 ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
 GENERAL_OCTOPRINT_NAME = 'OCTOPRINT'
@@ -35,16 +37,16 @@ async def send_buffer(buffer : list, payload : dict) -> dict:
         fn_ = '{}.csv'.format(uuid4().hex)
 
         with open(fn, 'w') as f:
-                write = csv.writer(f)
-                write.writerows(buffer)
+            write = csv.writer(f)
+            write.writerows(buffer)
 
-            fu = open(fn, 'rb')
+        fu = open(fn, 'rb')
 
-            files = {
-                'file' : ('data.csv', fu)
-            }
+        files = {
+            'file' : ('data.csv', fu)
+        }
+
         r = None
-
         async with aiohttp.ClientSession() as session:
             async with session.post(
                             '{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'),
