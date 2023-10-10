@@ -68,10 +68,9 @@ class AD():
     def __init__(self, plugin) -> None:
         self.run_thread = False
         self.loop = None
-        self.aio = None
         self.buffer_ = []
-        self.INTERVAL = 60.0
-        self.buffer_max_size_ = 128
+        self.INTERVAL = 20.0
+        self.buffer_max_size_ = 32
         self.last_interval_ = 0.0
         self.tx_ = ''
         self.inc_ = 0
@@ -105,7 +104,7 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_))
+                    syncio.ensure_future(send_buffer(buffer=self.buffer_, payload=pl_))
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
@@ -121,8 +120,6 @@ class AD():
                 self.loop = Thread(target=self._analyzing)
                 self.loop.daemon = True
                 self.loop.start()
-                self.aio = get_or_create_eventloop()
-                asyncio.set_event_loop(self.aio)
                 self.plugin._logger.info("PrintWatch anomaly detection service started")
 
 
