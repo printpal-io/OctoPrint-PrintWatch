@@ -1,6 +1,17 @@
 import psutil
 import platform
 
+def _flatten_dict(pyobj : dict, keystring : str ='') -> dict:
+    if type(pyobj) == dict:
+        keystring = keystring + '_' if keystring else keystring
+        for k in pyobj:
+            yield from flatten_dict(pyobj[k], keystring + str(k))
+    else:
+        yield keystring, pyobj
+
+def flatten_dict(input_dict : dict) -> dict:
+    return {k:v for k,v in flatten_dict(input_dict)}
+
 def ps_util_get_stats() -> dict:
     """
     Credit:
@@ -53,10 +64,6 @@ def oprint_get_stats(printer) -> dict:
     response_["resends"] = current_state_.get("resends", {})
 
     current_temps_ = printer.get_current_temperatures()
-    temp_history_ = printer.get_temperature_history()
-    current_job_ = printer.get_current_job()
     response_["current_temps"] = current_temps_
-    response_["temp_hist"] = temp_history_
-    response_["current_job"] = current_job_
-
+    response_ = flatten_dict(response_)
     return response_

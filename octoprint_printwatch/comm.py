@@ -67,7 +67,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
             sleep(1.0)
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
                 r_ = oprint_get_stats(self.plugin._printer)
-                print(r_)
+                self.plugin._logger.info(r_)
                 try:
                     self.aio.run_until_complete(self._send('api/v2/heartbeat', include_settings=init))
                     if not isinstance(self.response, bool) and self.response is not None:
