@@ -19,7 +19,7 @@ def get_or_create_eventloop():
             asyncio.set_event_loop(loop)
             return asyncio.get_event_loop()
 
-async def send_buffer(buffer : list, payload : dict) -> dict:
+async def send_buffer(buffer : list, payload : dict, logger) -> dict:
     '''
     Send data rows for inference or training
     '''
@@ -59,9 +59,10 @@ async def send_buffer(buffer : list, payload : dict) -> dict:
 
         fu.close()
         os.remove(fn)
-        print('AD response: {}'.format(r))
+        logger.info("SEND BUFFER RESPONSE: {}".format(r))
         return r
     except Exception as e:
+        logger.info("EXCEPT SEND BUFFER: {}".format(str(e)))
         return str(e)
 
 class AD():
@@ -105,7 +106,7 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_))
+                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_, self.plugin._logger))
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
