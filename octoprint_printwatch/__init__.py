@@ -31,7 +31,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.comm_manager._init_op()
         self.comm_manager.start_service()
         cpu_ = ps_util_get_stats()
-        stats_ = oprint_get_stats(self.plugin._printer)
+        stats_ = oprint_get_stats(self._printer)
         self._logger.info("CPU INFO: {}".format(cpu_))
         self._logger.info("STATS: {}".format(stats_))
 
