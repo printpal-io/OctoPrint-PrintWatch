@@ -5,6 +5,7 @@ from .videostreamer import VideoStreamer
 from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
+from .utils import *
 import asyncio
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
@@ -29,7 +30,10 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.inferencer._init_op()
         self.comm_manager._init_op()
         self.comm_manager.start_service()
-
+        cpu_ = ps_util_get_stats()
+        stats_ = oprint_get_stats(self.plugin._printer)
+        self._logger.info("CPU INFO: {}".format(cpu_))
+        self._logger.info("STATS: {}".format(stats_))
 
     def get_update_information(self) -> None:
         return dict(
