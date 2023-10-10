@@ -34,6 +34,9 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         stats_ = oprint_get_stats(self._printer)
         self._logger.info("CPU INFO: {}".format(cpu_))
         self._logger.info("STATS: {}".format(stats_))
+        self._logger.info("current job: {}".format(self._printer.get_current_job()))
+        self._logger.info("current temps: {}".format(self._printer.get_current_temperatures()))
+        self._logger.info("current job: {}".format(self._printer.get_temperature_history()))
 
     def get_update_information(self) -> None:
         return dict(

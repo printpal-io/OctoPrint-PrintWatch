@@ -48,5 +48,8 @@ def ps_util_get_stats() -> dict:
         return response_
 
 def oprint_get_stats(printer) -> dict:
+    response_ = {}
     current_state_ = printer.get_current_data()
+    response_["resends"] = current_state_.get("resends", {})
+
     return current_state_
