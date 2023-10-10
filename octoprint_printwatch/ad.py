@@ -89,7 +89,7 @@ class AD():
                         'inc' : self.inc_
                     }
                     tb_ = [list(self.buffer_[0].keys())]
-                    tb_.append([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
+                    tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                     self.plugin._logger.info('BUFFER VALUES ENTERING: {}'.format(tb_))
                     r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
