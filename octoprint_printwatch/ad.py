@@ -59,6 +59,7 @@ async def send_buffer(buffer : list, payload : dict) -> dict:
 
         fu.close()
         os.remove(fn)
+        print('AD response: {}'.format(r))
         return r
     except Exception as e:
         return str(e)
@@ -115,7 +116,7 @@ class AD():
         Start analysis service
         '''
         if self.plugin._settings.get(["enable_detector"]):
-            if self.inference_loop is None:
+            if self.loop is None:
                 self.run_thread = True
                 self.loop = Thread(target=self._analyzing)
                 self.loop.daemon = True
