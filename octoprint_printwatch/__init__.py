@@ -97,7 +97,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             self.comm_manager.new_ticket()
             self.ad.start_service()
             self.ad.tx_ = self.comm_manager.parameters.get('ticket')
-            self.ad.aio = self.inferencer.aio
             self._plugin_manager.send_plugin_message(
                 self._identifier,
                 dict(type="resetPlot")

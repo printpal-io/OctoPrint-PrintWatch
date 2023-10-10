@@ -1,10 +1,9 @@
-import asyncio
+import requests
 from threading import Thread
 from time import time, sleep
 from .utils import *
 from uuid import uuid4
 import csv
-import aiohttp
 import os
 
 ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
@@ -46,16 +45,7 @@ async def send_buffer(buffer : list, payload : dict, logger) -> dict:
             'file' : ('data.csv', fu)
         }
 
-        r = None
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                            '{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'),
-                            files = files,
-                            data = data_,
-                            headers={'User-Agent': 'Mozilla/5.0'},
-                            timeout=aiohttp.ClientTimeout(total=10.0)
-                        ) as response:
-                        r = await response.json()
+        r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v2/file/upload'), files=files, data=data_)
 
         fu.close()
         os.remove(fn_)
@@ -69,7 +59,6 @@ class AD():
     def __init__(self, plugin) -> None:
         self.run_thread = False
         self.loop = None
-        self.aio = None
         self.buffer_ = []
         self.INTERVAL = 20.0
         self.buffer_max_size_ = 32
@@ -106,7 +95,7 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_, logger=self.plugin._logger))
+                    r_ = send_buffer(buffer=self.buffer_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
