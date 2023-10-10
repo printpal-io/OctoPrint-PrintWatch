@@ -36,11 +36,11 @@ async def send_buffer(buffer : list, payload : dict, logger) -> dict:
 
         fn_ = '{}.csv'.format(uuid4().hex)
 
-        with open(fn, 'w') as f:
+        with open(fn_, 'w') as f:
             write = csv.writer(f)
             write.writerows(buffer)
 
-        fu = open(fn, 'rb')
+        fu = open(fn_, 'rb')
 
         files = {
             'file' : ('data.csv', fu)
@@ -58,7 +58,7 @@ async def send_buffer(buffer : list, payload : dict, logger) -> dict:
                         r = await response.json()
 
         fu.close()
-        os.remove(fn)
+        os.remove(fn_)
         logger.info("SEND BUFFER RESPONSE: {}".format(r))
         return r
     except Exception as e:
