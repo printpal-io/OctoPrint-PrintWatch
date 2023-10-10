@@ -29,7 +29,7 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
 
         df = pd.DataFrame(buffer)
         df.to_csv(fn_, index=False)
-        fu = open(fn, 'rb')
+        fu = open(fn_, 'rb')
 
         files = {
             'file' : ('data{}.csv'.format(payload.get("inc")), fu)
