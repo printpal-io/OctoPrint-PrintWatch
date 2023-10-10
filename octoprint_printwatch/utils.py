@@ -52,4 +52,11 @@ def oprint_get_stats(printer) -> dict:
     current_state_ = printer.get_current_data()
     response_["resends"] = current_state_.get("resends", {})
 
-    return current_state_
+    current_temps_ = printer.get_current_temperatures()
+    temp_history_ = printer.get_temperature_history()
+    current_job_ = printer.get_current_job()
+    response_["current_temps"] = current_temps_
+    response_["temp_hist"] = temp_history_
+    response_["current_job"] - current_job_
+
+    return response_
