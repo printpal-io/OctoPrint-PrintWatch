@@ -87,7 +87,7 @@ class AD():
                         'inc' : self.inc_
                     }
                     tb_ = [list(ele.values()) for ele in self.buffer_]
-                    self.plugin._logger('BUFFER VALUES ENTERING: {}'.format(tb_))
+                    self.plugin._logger.info('BUFFER VALUES ENTERING: {}'.format(tb_))
                     r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
                     self.buffer_ = []
