@@ -87,7 +87,7 @@ class AD():
                         'inc' : self.inc_
                     }
                     tb_ = [key for key in self.buffer_[0].keys()]
-                    tb_t_ = [**ele for ele in self.buffer_]
+                    tb_t_ = [list(ele.values()) for ele in self.buffer_]
                     tb_.append(tb_t_)
                     r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
