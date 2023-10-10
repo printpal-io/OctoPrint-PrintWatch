@@ -94,9 +94,6 @@ class AD():
         '''
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(1.0)
-            if self.aio is None:
-                self.aio = get_or_create_eventloop()
-                asyncio.set_event_loop(self.aio)
             if self.plugin._printer.is_printing():
                 # Get current printer state data
                 self.buffer_.append(get_all_stats(self.plugin._printer))
