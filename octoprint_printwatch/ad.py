@@ -36,12 +36,12 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
             'file' : ('data.csv', fu)
         }
 
-        r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v2/file/upload'), files=files, data=data_)
+        r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'), files=files, data=data_)
 
         fu.close()
         os.remove(fn_)
-        logger.info("SEND BUFFER RESPONSE: {}".format(r))
-        return r
+        logger.info("SEND BUFFER RESPONSE: {}".format(r.json()))
+        return r.json()
     except Exception as e:
         logger.info("EXCEPT SEND BUFFER: {}".format(str(e)))
         return str(e)
