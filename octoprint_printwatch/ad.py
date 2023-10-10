@@ -10,7 +10,7 @@ import pandas as pd
 ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
 GENERAL_OCTOPRINT_NAME = 'OCTOPRINT'
 
-def send_buffer(buffer : list, payload : dict, logger) -> dict:
+def send_buffer(buffer : list, payload : dict) -> dict:
     '''
     Send data rows for inference or training
     '''
@@ -26,11 +26,7 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
         }
 
         fn_ = '{}.csv'.format(uuid4().hex)
-
-        logger.info("BUFFER: {}".format(buffer))
-        logger.info("Buffer @ 0: {}".format(buffer[0]))
         df = pd.DataFrame(buffer[1:], columns=[buffer[0]])
-        logger.info("DF: {}".format(df))
         df.to_csv(fn_, index=False)
         fu = open(fn_, 'rb')
 
@@ -42,10 +38,10 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
 
         fu.close()
         os.remove(fn_)
-        logger.info("SEND BUFFER RESPONSE: {}".format(r.json()))
+        if r.status_code!= 200:
+            return ''
         return r.json()
     except Exception as e:
-        logger.info("EXCEPT SEND BUFFER: {}".format(str(e)))
         return str(e)
 
 class AD():
@@ -82,8 +78,6 @@ class AD():
                 self.buffer_.append(get_all_stats(self.plugin._printer))
                 # Flush buffer
                 if time() - self.last_interval_ > self.INTERVAL or len(self.buffer_) > self.buffer_max_size_:
-                    self.plugin._logger.info(self.plugin._printer.get_current_job())
-                    self.plugin._logger.info(self.plugin._file_manager.list_files())
                     pl_ = {
                         'api_key' : self.plugin._settings.get(["api_key"]),
                         'printer_id' : self.plugin._settings.get(["printer_id"]),
@@ -93,7 +87,8 @@ class AD():
                     tb_ = [list(self.buffer_[0].keys())]
                     tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                     self.plugin._logger.info('BUFFER VALUES ENTERING: {}'.format(tb_))
-                    r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
+                    if self.plugin._settings.get(["api_key"]).startswith(tuple(['sub_', 'fmu_'])):
+                        r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
