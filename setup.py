@@ -33,7 +33,7 @@ plugin_url = "https://github.com/printpal-io/OctoPrint-PrintWatch"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ["pillow>=9.3,<11", "aiohttp[speedups]>=3.7.4", "typing"]
+plugin_requires = ["pillow>=9.3,<11", "aiohttp[speedups]>=3.7.4", "typing", "psutil"]
 
 
 ### --------------------------------------------------------------------------------------------------------------------
