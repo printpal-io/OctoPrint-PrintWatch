@@ -83,7 +83,7 @@ class AD():
                 # Flush buffer
                 if time() - self.last_interval_ > self.INTERVAL or len(self.buffer_) > self.buffer_max_size_:
                     self.plugin._logger.info(self.plugin._printer.get_current_job())
-                    self.plugin._logger.info(self.plugin._file_manager.storage.list_files())
+                    self.plugin._logger.info(self.plugin._file_manager.list_files())
                     pl_ = {
                         'api_key' : self.plugin._settings.get(["api_key"]),
                         'printer_id' : self.plugin._settings.get(["printer_id"]),
