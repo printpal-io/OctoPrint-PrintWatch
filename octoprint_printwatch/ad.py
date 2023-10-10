@@ -26,7 +26,7 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
 
         fn_ = '{}.csv'.format(uuid4().hex)
 
-        with open(fn_, 'w') as f:
+        with open(fn_, 'w', newline='') as f:
             write = csv.writer(f)
             write.writerows(buffer)
 
@@ -86,7 +86,8 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    tb_ = [[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_]
+                    tb_ = list(self.buffer_[0].keys())
+                    tb_.append([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                     self.plugin._logger.info('BUFFER VALUES ENTERING: {}'.format(tb_))
                     r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
