@@ -106,7 +106,7 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_, self.plugin._logger))
+                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_, logger=self.plugin._logger))
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
