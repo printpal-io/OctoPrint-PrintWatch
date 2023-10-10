@@ -1,4 +1,5 @@
 import psutil
+import platform
 
 def ps_util_get_stats() -> dict:
     """
