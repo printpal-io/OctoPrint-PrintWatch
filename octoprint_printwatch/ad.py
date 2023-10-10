@@ -27,7 +27,8 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
 
         fn_ = '{}.csv'.format(uuid4().hex)
 
-
+        logger.info("BUFFER: {}".format(buffer))
+        logger.info("Buffer @ 0: {}".format(buffer[0]))
         df = pd.DataFrame(buffer[1:], columns=[buffer[0]])
         logger.info("DF: {}".format(df))
         df.to_csv(fn_, index=False)
