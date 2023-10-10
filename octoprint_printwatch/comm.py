@@ -14,6 +14,7 @@ from .utils import *
 
 
 DEFAULT_ROUTE = 'https://octoprint.printpal.io'
+ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
 
 PRINTING_STATES = [
                     'printing',
@@ -282,6 +283,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         self.heartbeat = False
         self.heartbeat_loop = None
         self.plugin._logger.info("PrintWatch heartbeat service terminated")
+
 
     async def send_request(self) -> None:
         self.image = self.plugin.streamer.grab_frame()

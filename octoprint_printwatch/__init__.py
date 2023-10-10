@@ -5,7 +5,7 @@ from .videostreamer import VideoStreamer
 from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
-from .utils import *
+from .ad import AD
 import asyncio
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
@@ -23,20 +23,13 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.inferencer = Inferencer(self)
         self.comm_manager = CommManager(self)
         self.controller = PrinterControl(self)
-
+        self.ad = AD(self)
 
     def on_after_startup(self) -> None:
         self._logger.info("Loading PrintWatch...")
         self.inferencer._init_op()
         self.comm_manager._init_op()
         self.comm_manager.start_service()
-        cpu_ = ps_util_get_stats()
-        stats_ = oprint_get_stats(self._printer)
-        self._logger.info("CPU INFO: {}".format(cpu_))
-        self._logger.info("STATS: {}".format(stats_))
-        self._logger.info("current job: {}".format(self._printer.get_current_job()))
-        self._logger.info("current temps: {}".format(self._printer.get_current_temperatures()))
-        self._logger.info("current job: {}".format(self._printer.get_temperature_history()))
 
     def get_update_information(self) -> None:
         return dict(
@@ -102,6 +95,8 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             self.inferencer.start_service()
             self.comm_manager.kill_service()
             self.comm_manager.new_ticket()
+            self.ad.start_service()
+            self.ad.tx_ = self.comm_manager.parameters.get('ticket')
             self._plugin_manager.send_plugin_message(
                 self._identifier,
                 dict(type="resetPlot")
@@ -110,6 +105,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             if self.inferencer.triggered:
                 self.controller.restart()
             self.inferencer.start_service()
+            self.ad.start_service()
             self.comm_manager.kill_service()
             self.comm_manager.event_feedback(str(event))
         elif event in (
@@ -121,6 +117,7 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             if self.inferencer.triggered:
                 self.inferencer.shutoff_event()
             self.inferencer.kill_service()
+            self.ad.kill_service()
             self.comm_manager.start_service()
             self.comm_manager.event_feedback(str(event))
 
