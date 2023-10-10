@@ -20,7 +20,7 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
         data_ = {
             'api_key' : payload.get("api_key"),
             'table' : GENERAL_OCTOPRINT_NAME,
-            'uid' : '{}-{}-{}'.format(payload.get("printer_id"), payload.get('tx_id'), payload.get("inc")),
+            'uid' : '{}-{}'.format(payload.get("printer_id"), payload.get('tx_id')),
             'overwrite' : False
         }
 
@@ -33,7 +33,7 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
         fu = open(fn_, 'rb')
 
         files = {
-            'file' : ('data.csv', fu)
+            'file' : ('data{}.csv'.format(payload.get("inc")), fu)
         }
 
         r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'), files=files, data=data_)
@@ -86,7 +86,10 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    r_ = send_buffer(buffer=self.buffer_, payload=pl_, logger=self.plugin._logger)
+                    tb_ = [key for key in self.buffer_[0].keys()]
+                    tb_t_ = [**ele for ele in self.buffer_]
+                    tb_.append(tb_t_)
+                    r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()

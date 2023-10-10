@@ -65,10 +65,11 @@ def oprint_get_stats(printer) -> dict:
 
     current_temps_ = printer.get_current_temperatures()
     response_["current_temps"] = current_temps_
-    response_ = flatten_dict(response_)
     return response_
 
 def get_all_stats(printer) -> dict:
     cpu_stats_ = ps_util_get_stats()
     oprint_stats_ = oprint_get_stats(printer)
-    return {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
+    all_stats_ = {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
+    all_stats_ = flatten_dict(all_stats_)
+    return all_stats_
