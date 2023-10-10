@@ -108,7 +108,7 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    asyncio.ensure_future(send_buffer(buffer=self.buffer_, payload=pl_))
+                    self.aio.run_until_complete(send_buffer(buffer=self.buffer_, payload=pl_))
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
