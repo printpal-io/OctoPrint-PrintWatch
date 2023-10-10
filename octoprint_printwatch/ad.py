@@ -5,6 +5,7 @@ from .utils import *
 from uuid import uuid4
 import csv
 import os
+import pandas as pd
 
 ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
 GENERAL_OCTOPRINT_NAME = 'OCTOPRINT'
@@ -26,11 +27,9 @@ def send_buffer(buffer : list, payload : dict, logger) -> dict:
 
         fn_ = '{}.csv'.format(uuid4().hex)
 
-        with open(fn_, 'w', newline='') as f:
-            write = csv.writer(f)
-            write.writerows(buffer)
-
-        fu = open(fn_, 'rb')
+        df = pd.DataFrame(buffer)
+        df.to_csv(fn_, index=False)
+        fu = open(fn, 'rb')
 
         files = {
             'file' : ('data{}.csv'.format(payload.get("inc")), fu)
