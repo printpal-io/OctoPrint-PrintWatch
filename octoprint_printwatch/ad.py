@@ -51,7 +51,7 @@ async def send_buffer(buffer : list, payload : dict) -> dict:
             async with session.post(
                             '{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'),
                             files = files,
-                            data = data_
+                            data = data_,
                             headers={'User-Agent': 'Mozilla/5.0'},
                             timeout=aiohttp.ClientTimeout(total=10.0)
                         ) as response:
