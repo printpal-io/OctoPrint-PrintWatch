@@ -5,7 +5,7 @@ def _flatten_dict(pyobj : dict, keystring : str ='') -> dict:
     if type(pyobj) == dict:
         keystring = keystring + '_' if keystring else keystring
         for k in pyobj:
-            yield from flatten_dict(pyobj[k], keystring + str(k))
+            yield from _flatten_dict(pyobj[k], keystring + str(k))
     else:
         yield keystring, pyobj
 
