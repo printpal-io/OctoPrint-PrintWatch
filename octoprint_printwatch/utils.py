@@ -52,7 +52,7 @@ def ps_util_get_stats() -> dict:
                 # ok, get max temp
                 response_["cpu_temp"] = max([float(thermal["sunxi-therm-2"][0][1] * 1000), response_["cpu_temp"]])
         response_["cpu_percent"] = float(psutil.cpu_percent(interval=None, percpu=False))
-        response_["cpu_freq"] = float(psutil.cpu_freq(percpu=False))
+        response_["cpu_freq"] = float(psutil.cpu_freq(percpu=False).current)
         response_["virtual_memory_percent"] = float(psutil.virtual_memory().percent)
         response_["disk_usage"] = float(psutil.disk_usage("/").percent)
 
