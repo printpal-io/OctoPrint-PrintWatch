@@ -85,7 +85,7 @@ class AD():
                         'tx_id' : self.tx_,
                         'inc' : self.inc_
                     }
-                    tb_ = [list(self.buffer_[0].keys())]
+                    tb_ = [list(self.buffer_[self.buffer_.index(max([len(ele) for ele in self.buffer_]))].keys())]
                     tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                     if self.plugin._settings.get(["api_key"]).startswith(tuple(['sub_', 'fmu_'])):
                         r_ = send_buffer(buffer=tb_, payload=pl_)
