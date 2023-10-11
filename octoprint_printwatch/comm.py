@@ -318,6 +318,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     elif response['statusCode'] == 213:
                         self.plugin.inferencer.REQUEST_INTERVAL= 300.0
                     else:
+                        if response['statusCode'] == 217:
+                            self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="infer", result="fail", code=response['statusCode']))
                         self.plugin.inferencer.pred = False
                         self.parameters['bad_responses'] += 1
                         self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
@@ -345,6 +347,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin.inferencer.pred = False
                 self.parameters['last_t'] = time()
         else:
+            self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="camera", result="fail"))
             self.parameters['bad_responses'] += 1
             self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
             self.plugin._logger.info('Issue acquiring the snapshot frame from the URL provided in the settings. - {}'.format(self.image))
