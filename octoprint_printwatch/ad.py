@@ -48,8 +48,8 @@ class AD():
         self.run_thread = False
         self.loop = None
         self.buffer_ = []
-        self.INTERVAL = 20.0
-        self.buffer_max_size_ = 32
+        self.INTERVAL = 2.0 * 60.0 # 2 minutes
+        self.buffer_max_size_ = 128
         self.last_interval_ = 0.0
         self.tx_ = ''
         self.inc_ = 0
@@ -78,7 +78,7 @@ class AD():
 
                 self.buffer_.append(all_stats_)
                 # Flush buffer
-                if time() - self.last_interval_ > self.INTERVAL or len(self.buffer_) > self.buffer_max_size_:
+                if time() - self.last_interval_ > self.INTERVAL && len(self.buffer_) > self.buffer_max_size_:
                     pl_ = {
                         'api_key' : self.plugin._settings.get(["api_key"]),
                         'printer_id' : self.plugin._settings.get(["printer_id"]),

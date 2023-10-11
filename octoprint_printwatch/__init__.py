@@ -8,13 +8,6 @@ from .printer import PrinterControl
 from .ad import AD
 import asyncio
 
-try:
-    from octoprint.access import ADMIN_GROUP
-    from octoprint.access.permissions import Permissions
-    ACCESS_PERMISSIONS_AVAILABLE = True
-except ImportError:
-    ACCESS_PERMISSIONS_AVAILABLE = False
-
 
 class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
                        octoprint.plugin.ShutdownPlugin,
@@ -172,6 +165,3 @@ def __plugin_load__():
     __plugin_hooks__ = {
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
     }
-
-    if ACCESS_PERMISSIONS_AVAILABLE:
-        __plugin_hooks__["octoprint.access.permissions"] = __plugin_implementation__.get_additional_permissions
