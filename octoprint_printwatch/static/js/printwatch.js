@@ -44,13 +44,13 @@ $(function() {
               self.chart.update();
 
             }
-          } else if (plugin=="printwatch" && data.type="camera") {
+          } else if (plugin=="printwatch" && data.type=="camera") {
             new PNotify({
                   title: 'PrintWatch Camera Error',
                   text: 'Error with camera URL in PrintWatch settings.',
                   hide: true
               });
-          } else if (plugin=="printwatch" && data.type="infer") {
+          } else if (plugin=="printwatch" && data.type=="infer") {
             new PNotify({
                   title: 'PrintWatch AI Analysis Error',
                   text: 'Error with Inference, got code: ' + data.code + '. TO proceed, register a free account on <a href="https://app.printpal.io">https://app.printpal.io</a> or upgrade to a <a href="https://printpal.io/standard-checkout/">Premium Plan</a>',
