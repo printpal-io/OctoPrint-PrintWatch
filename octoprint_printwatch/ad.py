@@ -74,11 +74,14 @@ class AD():
         run inference or train with data if
         printer is not matured.
         '''
+        self.plugin._logger.info("ANALYZING LOOP START PRE WHILE: {} | {}".format(self.run_thread, self.plugin._settings.get(["enable_detector"])))
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(1.0)
+            self.plugin._logger.info("INSIDE LOOP: {} | {}".format(self.plugin._printer.is_printing(), self.buffer_))
             if self.plugin._printer.is_printing():
                 # Get current printer state data
-                all_stats_ = get_all_stats(self.plugin._printer)
+                self.plugin._logger.info("RIGHT BEFORE TRYING TO GET STATS")
+                all_stats_ = get_all_stats(self.plugin._printer, self.plugin._logger)
                 self.plugin._logger.info("All stats: {}".format(all_stats_))
                 self.buffer_.append(all_stats_)
                 # Flush buffer

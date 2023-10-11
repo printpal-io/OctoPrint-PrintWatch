@@ -67,9 +67,12 @@ def oprint_get_stats(printer) -> dict:
     response_["current_temps"] = current_temps_
     return response_
 
-def get_all_stats(printer) -> dict:
-    cpu_stats_ = ps_util_get_stats()
-    oprint_stats_ = oprint_get_stats(printer)
-    all_stats_ = {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
-    all_stats_ = flatten_dict(all_stats_)
-    return all_stats_
+def get_all_stats(printer, logger) -> dict:
+    try:
+        cpu_stats_ = ps_util_get_stats()
+        oprint_stats_ = oprint_get_stats(printer)
+        all_stats_ = {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
+        all_stats_ = flatten_dict(all_stats_)
+        return all_stats_
+    except Exception as e:
+        logger.info("EXCEPTION IN GET ALL STATS: {}".format(str(e)))
