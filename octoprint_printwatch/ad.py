@@ -42,7 +42,7 @@ def send_buffer(buffer : list, payload : dict) -> dict:
         fu.close()
         os.remove(fn_)
         if r.status_code!= 200:
-            return str(r.status_code)
+            return ''
         return r.json()
     except Exception as e:
         return str(e)
@@ -76,10 +76,11 @@ class AD():
         '''
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(1.0)
-            self.plugin._logger.info("AD main loop: {} | {} | {}".format(self.plugin._printer.is_printing(), time() - self.last_interval_, self.buffer_))
             if self.plugin._printer.is_printing():
                 # Get current printer state data
-                self.buffer_.append(get_all_stats(self.plugin._printer))
+                all_stats_ = get_all_stats(self.plugin._printer)
+                self.plugin._logger.info("All stats: {}".format(all_stats_))
+                self.buffer_.append(all_stats_)
                 # Flush buffer
                 if time() - self.last_interval_ > self.INTERVAL or len(self.buffer_) > self.buffer_max_size_:
                     pl_ = {
@@ -92,12 +93,12 @@ class AD():
                     tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                     if self.plugin._settings.get(["api_key"]).startswith(tuple(['sub_', 'fmu_'])):
                         r_ = send_buffer(buffer=tb_, payload=pl_)
-                        self.plugin._logger.info('AD resp: {}'.format(r_))
                         if not isinstance(r_, dict):
                             self.plugin._logger.info('Issue with Anomaly Detector: {}'.format(r_))
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
+        self.plugin._logger.info("AD loop broke for some reason: {} | {} | {}".format(self.run_thread, self.plugin._settings.get(["enable_detector"]), self.plugin._printer.is_printing()))
 
 
     def start_service(self) -> None:
