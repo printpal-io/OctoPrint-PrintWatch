@@ -69,8 +69,10 @@ def oprint_get_stats(printer) -> dict:
     return response_
 
 def get_all_stats(printer) -> dict:
+    all_stats_ = {"timestamp" : round(time())}
     cpu_stats_ = ps_util_get_stats()
     oprint_stats_ = oprint_get_stats(printer)
-    all_stats_ = {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
+    all_stats_['cpu'] = cpu_stats_
+    all_stats_['oprint'] = oprint_stats_
     all_stats_ = flatten_dict(all_stats_)
     return all_stats_
