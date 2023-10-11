@@ -2,9 +2,8 @@ import requests
 from threading import Thread
 from time import time, sleep
 from .utils import *
-from uuid import uuid4
 import csv
-import os
+from io import BytesIO, TextIOWrapper
 
 
 ANOMALY_DETECTION_ROUTE = 'https://ad.printpal.io'
@@ -25,25 +24,22 @@ def send_buffer(buffer : list, payload : dict) -> dict:
             'overwrite' : False
         }
 
-        fn_ = '{}.csv'.format(uuid4().hex)
-        with open(fn_, 'w', newline='') as f:
-            write = csv.writer(f)
-            write.writerows(buffer)
-        #df = pd.DataFrame(buffer[1:], columns=[buffer[0]])
-        #df.to_csv(fn_, index=False)
-        fu = open(fn_, 'rb')
+        with BytesIO() as fb_:
+            sb_ = TextIOWrapper(fb_, 'utf-8', newline='')
+            csv.writer(sb_).writerows(data)
+            sb_.flush()
+            fb_.seek(0)
 
-        files = {
-            'file' : ('data{}.csv'.format(payload.get("inc")), fu)
-        }
+            files = {
+                'file' : ('data{}.csv'.format(payload.get("inc")), fb_)
+            }
 
-        r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'), files=files, data=data_)
+            r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'), files=files, data=data_)
 
-        fu.close()
-        os.remove(fn_)
-        if r.status_code!= 200:
-            return ''
-        return r.json()
+            if r.status_code!= 200:
+                return ''
+            return r.json()
+        return ''
     except Exception as e:
         return str(e)
 
