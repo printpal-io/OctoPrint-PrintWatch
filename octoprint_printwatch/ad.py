@@ -42,7 +42,7 @@ def send_buffer(buffer : list, payload : dict) -> dict:
         fu.close()
         os.remove(fn_)
         if r.status_code!= 200:
-            return ''
+            return str(r.status_code)
         return r.json()
     except Exception as e:
         return str(e)
@@ -76,6 +76,7 @@ class AD():
         '''
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(1.0)
+            self.plugin._logger.info("AD main loop: {} | {} | {}".format(self.plugin._printer.is_printing(), time() - self.last_interval_, self.buffer_))
             if self.plugin._printer.is_printing():
                 # Get current printer state data
                 self.buffer_.append(get_all_stats(self.plugin._printer))
