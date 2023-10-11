@@ -7,7 +7,7 @@ import csv
 import os
 import pandas as pd
 
-ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
+ANOMALY_DETECTION_ROUTE = 'https://ad.printpal.io'
 GENERAL_OCTOPRINT_NAME = 'OCTOPRINT'
 
 def send_buffer(buffer : list, payload : dict) -> dict:
