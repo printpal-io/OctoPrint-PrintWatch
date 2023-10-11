@@ -28,7 +28,7 @@ def send_buffer(buffer : list, payload : dict) -> dict:
         fn_ = '{}.csv'.format(uuid4().hex)
         with open(fn_, 'w', newline='') as f:
             write = csv.writer(f)
-            write.writerows(data)
+            write.writerows(buffer)
         #df = pd.DataFrame(buffer[1:], columns=[buffer[0]])
         #df.to_csv(fn_, index=False)
         fu = open(fn_, 'rb')
