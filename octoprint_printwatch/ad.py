@@ -26,7 +26,7 @@ def send_buffer(buffer : list, payload : dict) -> dict:
 
         with BytesIO() as fb_:
             sb_ = TextIOWrapper(fb_, 'utf-8', newline='')
-            csv.writer(sb_).writerows(data)
+            csv.writer(sb_).writerows(buffer)
             sb_.flush()
             fb_.seek(0)
 
