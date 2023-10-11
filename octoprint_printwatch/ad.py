@@ -88,7 +88,9 @@ class AD():
                     tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                     self.plugin._logger.info('BUFFER VALUES ENTERING: {}'.format(tb_))
                     if self.plugin._settings.get(["api_key"]).startswith(tuple(['sub_', 'fmu_'])):
-                        r_ = send_buffer(buffer=tb_, payload=pl_, logger=self.plugin._logger)
+                        r_ = send_buffer(buffer=tb_, payload=pl_)
+                        if not isinstance(r_, dict):
+                            self.plugin._logger.info('Issue with Anomaly Detector: {}'.format(r_))
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
