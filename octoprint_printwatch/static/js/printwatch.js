@@ -53,7 +53,7 @@ $(function() {
           } else if (plugin=="printwatch" && data.type=="infer") {
             new PNotify({
                   title: 'PrintWatch AI Analysis Error',
-                  text: 'Error with Inference, got code: ' + data.code + '. TO proceed, register a free account on <a href="https://app.printpal.io">https://app.printpal.io</a> or upgrade to a <a href="https://printpal.io/standard-checkout/">Premium Plan</a>',
+                  text: 'Error with Inference, got code: ' + data.code + '. To proceed, register a free account on <a href="https://app.printpal.io">https://app.printpal.io</a> or upgrade to a <a href="https://printpal.io/standard-checkout/">Premium Plan</a>',
                   hide: true
               });
           }

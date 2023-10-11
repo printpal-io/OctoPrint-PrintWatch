@@ -347,6 +347,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin.inferencer.pred = False
                 self.parameters['last_t'] = time()
         else:
+            self.parameters['last_t'] = time()
             self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="camera", result="fail"))
             self.parameters['bad_responses'] += 1
             self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
