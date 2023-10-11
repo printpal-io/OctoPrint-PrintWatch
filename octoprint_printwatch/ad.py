@@ -76,8 +76,10 @@ class AD():
         '''
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(1.0)
+            self.plugin._logger.info('AD main loop: {} | {} | {}'.format(self.run_thread, self.plugin._settings.get(["enable_detector"]), self.plugin._printer.is_printing()))
             if self.plugin._printer.is_printing():
                 # Get current printer state data
+                self.plugin._logger.info('Attempting to get all stats')
                 all_stats_ = get_all_stats(self.plugin._printer)
                 self.plugin._logger.info("All stats: {}".format(all_stats_))
                 self.buffer_.append(all_stats_)
