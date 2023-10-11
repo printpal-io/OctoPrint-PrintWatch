@@ -78,7 +78,7 @@ class AD():
 
                 self.buffer_.append(all_stats_)
                 # Flush buffer
-                if time() - self.last_interval_ > self.INTERVAL && len(self.buffer_) > self.buffer_max_size_:
+                if time() - self.last_interval_ > self.INTERVAL and len(self.buffer_) > self.buffer_max_size_:
                     pl_ = {
                         'api_key' : self.plugin._settings.get(["api_key"]),
                         'printer_id' : self.plugin._settings.get(["printer_id"]),
