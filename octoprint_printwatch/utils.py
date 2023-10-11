@@ -1,5 +1,6 @@
 import psutil
 import platform
+from time import time
 
 def _flatten_dict(pyobj : dict, keystring : str ='') -> dict:
     if type(pyobj) == dict:
@@ -59,7 +60,7 @@ def ps_util_get_stats() -> dict:
         return response_
 
 def oprint_get_stats(printer) -> dict:
-    response_ = {}
+    response_ = {"timestamp" : round(time())}
     current_state_ = printer.get_current_data()
     response_["resends"] = current_state_.get("resends", {})
 
@@ -67,12 +68,9 @@ def oprint_get_stats(printer) -> dict:
     response_["current_temps"] = current_temps_
     return response_
 
-def get_all_stats(printer, logger) -> dict:
-    try:
-        cpu_stats_ = ps_util_get_stats()
-        oprint_stats_ = oprint_get_stats(printer)
-        all_stats_ = {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
-        all_stats_ = flatten_dict(all_stats_)
-        return all_stats_
-    except Exception as e:
-        logger.info("EXCEPTION IN GET ALL STATS: {}".format(str(e)))
+def get_all_stats(printer) -> dict:
+    cpu_stats_ = ps_util_get_stats()
+    oprint_stats_ = oprint_get_stats(printer)
+    all_stats_ = {'cpu' : cpu_stats_, 'oprint' : oprint_stats_}
+    all_stats_ = flatten_dict(all_stats_)
+    return all_stats_

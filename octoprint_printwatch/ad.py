@@ -70,15 +70,12 @@ class AD():
         run inference or train with data if
         printer is not matured.
         '''
-        self.plugin._logger.info("ANALYZING LOOP START PRE WHILE: {} | {}".format(self.run_thread, self.plugin._settings.get(["enable_detector"])))
         while self.run_thread and self.plugin._settings.get(["enable_detector"]):
             sleep(1.0)
-            self.plugin._logger.info("INSIDE LOOP: {} | {}".format(self.plugin._printer.is_printing(), self.buffer_))
             if self.plugin._printer.is_printing():
                 # Get current printer state data
-                self.plugin._logger.info("RIGHT BEFORE TRYING TO GET STATS")
-                all_stats_ = get_all_stats(self.plugin._printer, self.plugin._logger)
-                self.plugin._logger.info("All stats: {}".format(all_stats_))
+                all_stats_ = get_all_stats(self.plugin._printer)
+
                 self.buffer_.append(all_stats_)
                 # Flush buffer
                 if time() - self.last_interval_ > self.INTERVAL or len(self.buffer_) > self.buffer_max_size_:
@@ -97,8 +94,6 @@ class AD():
                     self.inc_ += 1
                     self.buffer_ = []
                     self.last_interval_ = time()
-        self.plugin._logger.info("AD loop broke for some reason: {} | {} | {}".format(self.run_thread, self.plugin._settings.get(["enable_detector"]), self.plugin._printer.is_printing()))
-
 
     def start_service(self) -> None:
         '''
