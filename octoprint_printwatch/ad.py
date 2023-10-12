@@ -31,7 +31,7 @@ def send_buffer(buffer : list, payload : dict) -> dict:
             fb_.seek(0)
 
             files = {
-                'file' : ('data{}-{}-{}.csv'.format(payload.get("inc"), buffer[0].get("timestamp", 0), buffer[-1].get("timestamp", 0)), fb_)
+                'file' : ('data{}-{}-{}.csv'.format(payload.get("inc"), payload.get("start", 0), payload.get("end", 0)), fb_)
             }
 
             r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'), files=files, data=data_)
@@ -86,7 +86,9 @@ class AD():
                             'api_key' : self.plugin._settings.get(["api_key"]),
                             'printer_id' : self.plugin._settings.get(["printer_id"]),
                             'tx_id' : self.tx_,
-                            'inc' : self.inc_
+                            'inc' : self.inc_,
+                            'start' : self.buffer_[0].get("timestamp", 0),
+                            'end' : self.buffer_[-1].get("timestamp", 0)
                         }
                         tb_ = [list(self.buffer_[0].keys())]
                         tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
