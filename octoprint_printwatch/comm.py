@@ -10,9 +10,11 @@ from io import BytesIO
 import PIL.Image as Image
 from PIL import ImageDraw
 from typing import Union
+from .utils import *
 
 
 DEFAULT_ROUTE = 'https://octoprint.printpal.io'
+ANOMALY_DETECTION_ROUTE = 'http://ad.printpal.io'
 
 PRINTING_STATES = [
                     'printing',
@@ -65,6 +67,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         while self.plugin._settings.get(["enable_detector"]) and self.heartbeat:
             sleep(1.0)
             if time() - self.parameters['last_t'] > self.heartbeat_interval:
+                r_ = get_all_stats(self.plugin._printer)
+                self.plugin._logger.info('All stats: {}'.format(r_))
                 try:
                     self.aio.run_until_complete(self._send('api/v2/heartbeat', include_settings=init))
                     if not isinstance(self.response, bool) and self.response is not None:
@@ -280,6 +284,7 @@ class CommManager(octoprint.plugin.SettingsPlugin):
         self.heartbeat_loop = None
         self.plugin._logger.info("PrintWatch heartbeat service terminated")
 
+
     async def send_request(self) -> None:
         self.image = self.plugin.streamer.grab_frame()
         if not isinstance(self.image, bool):
@@ -313,6 +318,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                     elif response['statusCode'] == 213:
                         self.plugin.inferencer.REQUEST_INTERVAL= 300.0
                     else:
+                        if response['statusCode'] == 217:
+                            self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="infer", result="fail", code=response['statusCode']))
                         self.plugin.inferencer.pred = False
                         self.parameters['bad_responses'] += 1
                         self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
@@ -340,6 +347,8 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                 self.plugin.inferencer.pred = False
                 self.parameters['last_t'] = time()
         else:
+            self.parameters['last_t'] = time()
+            self.plugin._plugin_manager.send_plugin_message(self.plugin._identifier, dict(type="camera", result="fail"))
             self.parameters['bad_responses'] += 1
             self.plugin.inferencer.REQUEST_INTERVAL = 10.0 + self.parameters['bad_responses'] * 5.0 if self.parameters['bad_responses'] < 10 else 120.
             self.plugin._logger.info('Issue acquiring the snapshot frame from the URL provided in the settings. - {}'.format(self.image))
