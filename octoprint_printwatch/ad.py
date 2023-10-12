@@ -31,7 +31,7 @@ def send_buffer(buffer : list, payload : dict) -> dict:
             fb_.seek(0)
 
             files = {
-                'file' : ('data{}.csv'.format(payload.get("inc")), fb_)
+                'file' : ('data{}-{}-{}.csv'.format(payload.get("inc"), buffer[0].get("timestamp", 0), buffer[-1].get("timestamp", 0)), fb_)
             }
 
             r = requests.post('{}/{}'.format(ANOMALY_DETECTION_ROUTE, 'api/v1/file/upload'), files=files, data=data_)
