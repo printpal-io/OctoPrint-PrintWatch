@@ -79,7 +79,8 @@ class AD():
 
                     self.buffer_.append(all_stats_)
                     # Flush buffer
-                    self.buffer_ = self.buffer_[self.buffer_.index(max([len(ele) for ele in self.buffer_])):]
+                    idx_ = [len(ele) for ele in self.buffer_].index(max([len(ele) for ele in self.buffer_]))
+                    self.buffer_ = self.buffer_[idx_:]
                     self.plugin._logger.info("Buffer: length: {}".format(len(self.buffer_)))
                     if time() - self.last_interval_ > self.INTERVAL and len(self.buffer_) > self.buffer_max_size_:
                         pl_ = {
