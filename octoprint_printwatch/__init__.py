@@ -26,18 +26,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.controller = PrinterControl(self)
         self.ad = AD(self)
 
-    def get_additional_permissions(self):
-        """
-        Returns dashboard-specific user permissions
-        """
-        return [
-            dict(key="ADMIN",
-                 name="Admin access",
-                 description="Allows modifying or adding shell commands",
-                 roles=["admin"],
-                 dangerous=True,
-                 default_groups=[ADMIN_GROUP])
-        ]
 
     def on_after_startup(self) -> None:
         self._logger.info("Loading PrintWatch...")
