@@ -81,7 +81,6 @@ class AD():
                     # Flush buffer
                     idx_ = [len(ele) for ele in self.buffer_].index(max([len(ele) for ele in self.buffer_]))
                     self.buffer_ = self.buffer_[idx_:]
-                    self.plugin._logger.info("Buffer: length: {}".format(len(self.buffer_)))
                     if time() - self.last_interval_ > self.INTERVAL and len(self.buffer_) > self.buffer_max_size_:
                         pl_ = {
                             'api_key' : self.plugin._settings.get(["api_key"]),
@@ -93,7 +92,6 @@ class AD():
                         tb_.extend([[val if val is not None else -1 for val in list(ele.values())] for ele in self.buffer_])
                         if self.plugin._settings.get(["api_key"]).startswith(tuple(['sub_', 'fmu_'])):
                             r_ = send_buffer(buffer=tb_, payload=pl_)
-                            self.plugin._logger.info("RESP: {}".format(r_))
                             if not isinstance(r_, dict):
                                 self.plugin._logger.info('Issue with Anomaly Detector: {}'.format(r_))
                         self.inc_ += 1

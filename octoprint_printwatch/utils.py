@@ -60,10 +60,9 @@ def ps_util_get_stats() -> dict:
         return response_
 
 def oprint_get_stats(printer) -> dict:
-    response_ = {"timestamp" : round(time())}
+    response_ = {}
     current_state_ = printer.get_current_data()
     response_["resends"] = current_state_.get("resends", {})
-
     current_temps_ = printer.get_current_temperatures()
     response_["current_temps"] = current_temps_
     return response_
