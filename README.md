@@ -80,7 +80,7 @@
   7. Restart OctoPrint once Installation is completed
 </p>
 <p>
-  The full installation guide/quickstart can be found here: <a href="https://printpal.io/documentation/quick-start-guide/">QuickStart Guide with OctoPrint</a>
+  The full installation guide/quickstart can be found here: <a href="https://docs.printpal.io/installation/QUICK_START_GUIDE/">QuickStart Guide with OctoPrint</a>
 </p>
 <h3>
   Configuration
@@ -218,7 +218,7 @@
     <b>*</b> this setting has been removed in newer versions
 </p>
 <p>
-    To read more on configuring your setup, see <a href="https://printpal.io/documentation/">documentation</a>.
+    To read more on configuring your setup, see <a href="https://docs.printpal.io">documentation</a>.
 </p>
 <h3>
   Web App
