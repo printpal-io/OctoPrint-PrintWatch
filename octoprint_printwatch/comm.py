@@ -204,6 +204,12 @@ class CommManager(octoprint.plugin.SettingsPlugin):
                             event=event
                         )
             else:
+                 if int(self.plugin._settings.get(["camera_rotation"])) > 0:
+                     frame_ = Image.open(BytesIO(self.image))
+                     frame_ = frame_.rotate(int(self.plugin._settings.get(["camera_rotation"])), expand=True)
+                     frame_out_ = BytesIO()
+                     frame_.save(frame_out_, format='PNG')
+                     self.image = frame_out_.getvalue()
                  data = self._create_payload(image=b64encode(self.image).decode('utf8'),
                             include_settings=include_settings,
                             force=force
