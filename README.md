@@ -1,6 +1,6 @@
 <p align="center">
     <br>
-    <img src="https://printpal.io/wp-content/uploads/2022/01/printwatch_logo_gh.png" width="600"/>
+    <img src="https://printwatch.printpal.io/wp-content/uploads/2022/01/printwatch_logo_gh.png" width="600"/>
     <br>
 <p>
 <p align="center">
@@ -114,7 +114,7 @@
       API Key
     </td>
     <td>
-      The secret key used to authenticate API usage. Get yours <a href="https://printpal.io/printwatch/#pricing">here</a>
+      The secret key used to authenticate API usage. Get yours <a href="https://printwatch.printpal.io/printwatch/#pricing">here</a>
     </td>
   </tr>
   <tr>
@@ -238,3 +238,4 @@
 <img src="/extras/images/printwatch-web-app-individual-printer.jpg" alt="Web App individual printer page" title="Web App main individual printer page">
 
 <br>
+
