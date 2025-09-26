@@ -5,7 +5,6 @@ from .videostreamer import VideoStreamer
 from .comm import CommManager
 from .inferencer import Inferencer
 from .printer import PrinterControl
-from .ad import AD
 import asyncio
 
 
@@ -24,7 +23,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
         self.inferencer = Inferencer(self)
         self.comm_manager = CommManager(self)
         self.controller = PrinterControl(self)
-        self.ad = AD(self)
 
 
     def on_after_startup(self) -> None:
@@ -98,8 +96,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             self.inferencer.start_service()
             self.comm_manager.kill_service()
             self.comm_manager.new_ticket()
-            self.ad.start_service()
-            self.ad.tx_ = self.comm_manager.parameters.get('ticket')
             self._plugin_manager.send_plugin_message(
                 self._identifier,
                 dict(type="resetPlot")
@@ -108,7 +104,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             if self.inferencer.triggered:
                 self.controller.restart()
             self.inferencer.start_service()
-            self.ad.start_service()
             self.comm_manager.kill_service()
             self.comm_manager.event_feedback(str(event))
         elif event in (
@@ -120,7 +115,6 @@ class PrintWatchPlugin(octoprint.plugin.StartupPlugin,
             if self.inferencer.triggered:
                 self.inferencer.shutoff_event()
             self.inferencer.kill_service()
-            self.ad.kill_service()
             self.comm_manager.start_service()
             self.comm_manager.event_feedback(str(event))
 
