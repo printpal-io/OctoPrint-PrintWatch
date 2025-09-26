@@ -127,12 +127,13 @@ Once you have successfully installed PrintWatch, you should configure the settin
 
 3. Scroll down to the Plugin Settings in the left-side selection menu and select 'PrintWatch'
 
-Follow the setup guide on the official [GitHub](https://github.com/printpal-io/OctoPrint-PrintWatch) or the [printpal.io website](https://printpal.io/documentation/quick-start-guide/)
+Follow the setup guide on the official [GitHub](https://github.com/printpal-io/OctoPrint-PrintWatch) or the [printpal.io website](https://printwatch.printpal.io/documentation/quick-start-guide/)
 
 
 ### Authentication
 
-In order to use PrintWatch, you must provide your API key in the settings. Visit the [printpal.io website](https://printpal.io/pricing/) to register your key for your printers.
+In order to use PrintWatch, you must provide your API key in the settings. Visit the [printpal.io website](https://printwatch.printpal.io/pricing/) to register your key for your printers.
 
 # Privacy Policy
-Read our privacy polich here: [PrintWatch Privacy policy](https://printpal.io/privacy/)
+Read our privacy polich here: [PrintWatch Privacy policy](https://printwatch.printpal.io/privacy/)
+
